@@ -52,60 +52,39 @@ const OrderPage = () => {
         <>
           <Card className="mb-6">
             <CardHeader>
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 <CardTitle className="text-2xl font-bold">Order Details</CardTitle>
-                <Button onClick={() => window.print()}>Print Order</Button>
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setTimeout(() => window.print(), 300);
+                  }}
+                >
+                  Print Order
+                </Button>
               </div>
             </CardHeader>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4">
               <div>
                 <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+                <p><strong>Order ID:</strong> {order._id}</p>
                 <p>
-                  <strong>Order ID: </strong>
-                  {order._id}
-                </p>
-                <p>
-                  <strong>Status: </strong>
-                  <span
-                    className={`${
-                      order.status === 'pending' ? 'text-yellow-500' : 'text-green-500'
-                    }`}
-                  >
+                  <strong>Status:</strong>{' '}
+                  <span className={order.status === 'pending' ? 'text-yellow-500' : 'text-green-500'}>
                     {order.status}
                   </span>
                 </p>
-                <p>
-                  <strong>Total Items: </strong>
-                  {order.items.length}
-                </p>
-                <p>
-                  <strong>Payment Method: </strong>
-                  {order.method}
-                </p>
-                <p>
-                  <strong>Sub Total: ₹</strong>
-                  {order.subTotal}
-                </p>
-                <p>
-                  <strong>Placed At: </strong>
-                  {new Date(order.createdAt).toLocaleDateString()}
-                </p>
-                <p>
-                  <strong>Paid At: </strong>
-                  {order.paidAt || 'Payment Through COD'}
-                </p>
+                <p><strong>Total Items:</strong> {order.items.length}</p>
+                <p><strong>Payment Method:</strong> {order.method}</p>
+                <p><strong>Sub Total: ₹</strong> {order.subTotal}</p>
+                <p><strong>Placed At:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
+                <p><strong>Paid At:</strong> {order.paidAt || 'Payment Through COD'}</p>
               </div>
               <div>
                 <h2 className="text-xl font-semibold mb-4">Shipping Details</h2>
-                <p>
-                  <strong>Phone:</strong> {order.phone}
-                </p>
-                <p>
-                  <strong>Address:</strong> {order.address}
-                </p>
-                <p>
-                  <strong>User:</strong> {order.user?.email || 'Guest User'}
-                </p>
+                <p><strong>Phone:</strong> {order.phone}</p>
+                <p><strong>Address:</strong> {order.address}</p>
+                <p><strong>User:</strong> {order.user?.email || 'Guest User'}</p>
               </div>
             </div>
           </Card>
@@ -122,21 +101,16 @@ const OrderPage = () => {
                 </Link>
                 <CardContent className="p-4">
                   <h3 className="text-lg font-semibold mb-2">{e.product.title}</h3>
-                  <p>
-                    <strong>Quantity:</strong> {e.quantity}
-                  </p>
-                  <p>
-                    <strong>Price:</strong> ₹{e.product.price}
-                  </p>
+                  <p><strong>Quantity:</strong> {e.quantity}</p>
+                  <p><strong>Price:</strong> ₹{e.product.price}</p>
                 </CardContent>
               </Card>
             ))}
           </div>
         </>
       ) : (
-        <p className='text-red-500 text-3xl text-center'>Not Accessible
-        <Link to={"/"} >Go to Home page</Link>
-        
+        <p className="text-red-500 text-3xl text-center">
+          Not Accessible <Link to="/">Go to Home page</Link>
         </p>
       )}
     </div>
