@@ -1,6 +1,6 @@
 import { ProductData } from '@/context/productContext';
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import Loading from '@/components/Loading';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { UserData } from '@/context/UserContext';
@@ -194,11 +194,13 @@ const ProductPage = () => {
                     {prod.images &&
                       prod.images.map((image, index) => (
                         <CarouselItem key={index}>
-                          <img
-                            src={image.url}
-                            alt="image"
-                            className="w-full rounded-md"
-                          />
+                          <Link to={`/product/${prod._id}`}>
+                            <img
+                              src={image.url}
+                              alt={prod.title}
+                              className="w-full rounded-md"
+                            />
+                          </Link>
                         </CarouselItem>
                       ))}
                   </CarouselContent>
