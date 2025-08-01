@@ -51,6 +51,7 @@ export const server="https://ecommerce-15v7.onrender.com";
   "Vitamins & Supplements",
   "Healthcare Devices",
   "Ayurveda & Herbal Products",
+  "Sexual Wellness",
   "Sanitizers & Masks",
 
   "Groceries & Food",
