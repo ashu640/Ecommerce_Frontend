@@ -10,7 +10,7 @@ const ProductCard = ({ product, latest }) => {
     <div>
       {product && (
         <div className="w-[300px] mx-auto shadow-md rounded-lg overflow-hidden border border-gray-200">
-          <Link to={`/products/${product._id}`}>
+          <Link to={`/product/${product._id}`}>
             <div className="relative h-[300px] bg-gray-100 flex justify-center items-center">
               <img
                 src={product.images?.[0]?.url || "/placeholder.png"}
