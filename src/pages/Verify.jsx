@@ -14,17 +14,19 @@ import { CartData } from "@/context/cartContext";
 import { Loader } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const Verify = () => {
+  const { t } = useTranslation('verify'); // i18n hook
   const [otp, setOtp] = useState("");
   const [timer, setTimer] = useState(10);
   const [canResend, setCanResend] = useState(false);
-  const { btnLoading,LoginUser,verifyUser } = UserData();
-  const {fetchCart} =CartData()
+  const { btnLoading, LoginUser, verifyUser } = UserData();
+  const { fetchCart } = CartData();
   const navigate = useNavigate();
 
   const submitHandler = () => {
-    verifyUser(Number(otp),navigate,fetchCart)
+    verifyUser(Number(otp), navigate, fetchCart);
   };
 
   useEffect(() => {
@@ -43,27 +45,27 @@ const Verify = () => {
     const seconds = time % 60;
     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   };
-const handleResendOtp=async()=>{
-const email=localStorage.getItem("email")
-await LoginUser(email,navigate)
-setTimer(10)
-setCanResend(false);
 
+  const handleResendOtp = async () => {
+    const email = localStorage.getItem("email");
+    await LoginUser(email, navigate);
+    setTimer(10);
+    setCanResend(false);
+  };
 
-}
   return (
     <div className="min-h-[60vh] flex justify-center items-center">
       <Card className="w-full max-w-md p-6 shadow-lg">
         <CardHeader>
-          <CardTitle className="text-xl">Verify using OTP</CardTitle>
+          <CardTitle className="text-xl">{t("title")}</CardTitle>
           <CardDescription className="text-sm text-gray-500">
-            If you didn’t receive the OTP, please check your spam folder.
+            {t("subtitle")}
           </CardDescription>
         </CardHeader>
 
         <CardContent>
           <div className="space-y-2">
-            <Label htmlFor="otp">Enter OTP</Label>
+            <Label htmlFor="otp">{t("label")}</Label>
             <Input
               id="otp"
               type="text"
@@ -72,7 +74,7 @@ setCanResend(false);
               maxLength={6}
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
-              placeholder="6-digit code"
+              placeholder={t("placeholder")}
             />
           </div>
         </CardContent>
@@ -88,7 +90,7 @@ setCanResend(false);
                 <Loader className="animate-spin" size={16} />
               </span>
             ) : (
-              "Submit"
+              t("submit")
             )}
           </Button>
         </CardFooter>
@@ -96,15 +98,15 @@ setCanResend(false);
         <div className="mt-4 text-center space-y-2">
           <p className="text-sm font-medium">
             {canResend
-              ? "You can now resend the OTP"
-              : `Time remaining: ${formatTime(timer)}`}
+              ? t("canResend")
+              : `${t("timeRemaining")}: ${formatTime(timer)}`}
           </p>
           <Button
             variant="secondary"
             disabled={!canResend}
             onClick={handleResendOtp}
           >
-            Resend OTP
+            {t("resend")}
           </Button>
         </div>
       </Card>

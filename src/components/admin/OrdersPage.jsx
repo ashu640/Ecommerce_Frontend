@@ -16,10 +16,8 @@ const OrdersPage = () => {
   const fetchOrders=async()=>{
     try {
       const {data}=await axios.get(`${server}/api/order/admin/all`,{
-        headers:{
-          token:Cookies.get("token")
-
-        }
+   
+          withCredentials: true
       })
       setOrders(data);
       setLoading(false);
@@ -40,9 +38,8 @@ fetchOrders()
 
     try {
       const {data}=await axios.post(`${server}/api/order/${orderId}`,{status},{
-        headers:{
-          token:Cookies.get("token"),
-        }
+      
+          withCredentials: true
       })
       toast.success(data.message)
       fetchOrders()

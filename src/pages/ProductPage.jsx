@@ -14,8 +14,10 @@ import { Edit, Loader, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { useTranslation } from 'react-i18next';
 
 const ProductPage = () => {
+  const { t } = useTranslation('productpage'); // Load product.json
   const {
     prod,
     relatedProduct,
@@ -66,15 +68,13 @@ const ProductPage = () => {
         stock,
         category,
       }, {
-        headers: {
-          token: Cookies.get('token'),
-        },
+        withCredentials: true,
       });
       toast.success(data.message);
       fetchProduct(id);
       setShow(false);
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Update failed');
+      toast.error(error.response?.data?.message || t('updateFailed'));
     } finally {
       setBtnLoading(false);
     }
@@ -85,7 +85,7 @@ const ProductPage = () => {
     setBtnLoading(true);
 
     if (!updatedImages || updatedImages.length === 0) {
-      toast.error('Please select new images');
+      toast.error(t('pleaseSelectImages'));
       setBtnLoading(false);
       return;
     }
@@ -99,13 +99,13 @@ const ProductPage = () => {
       const { data } = await axios.post(`${server}/api/product/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          token: Cookies.get('token'),
         },
+        withCredentials: true,
       });
       toast.success(data.message);
       fetchProduct(id);
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Image update failed');
+      toast.error(error.response?.data?.message || t('imageUpdateFailed'));
     } finally {
       setBtnLoading(false);
     }
@@ -126,25 +126,25 @@ const ProductPage = () => {
               {show && (
                 <form onSubmit={submitHandler} className="space-y-4 mt-4">
                   <div>
-                    <Label>Title</Label>
+                    <Label>{t('title')}</Label>
                     <Input
-                      placeholder="Product Title"
+                      placeholder={t('productTitle')}
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       required
                     />
                   </div>
                   <div>
-                    <Label>Description</Label>
+                    <Label>{t('description')}</Label>
                     <Input
-                      placeholder="Description"
+                      placeholder={t('description')}
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       required
                     />
                   </div>
                   <div>
-                    <Label>Category</Label>
+                    <Label>{t('category')}</Label>
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
@@ -159,27 +159,27 @@ const ProductPage = () => {
                     </select>
                   </div>
                   <div>
-                    <Label>Price</Label>
+                    <Label>{t('price')}</Label>
                     <Input
                       type="number"
-                      placeholder="Product price"
+                      placeholder={t('productPrice')}
                       value={price}
                       onChange={(e) => setPrice(e.target.value)}
                       required
                     />
                   </div>
                   <div>
-                    <Label>Stock</Label>
+                    <Label>{t('stock')}</Label>
                     <Input
                       type="number"
-                      placeholder="Product stock"
+                      placeholder={t('productStock')}
                       value={stock}
                       onChange={(e) => setStock(e.target.value)}
                       required
                     />
                   </div>
                   <Button type="submit" className="w-full" disabled={btnLoading}>
-                    {btnLoading ? <Loader /> : 'Update Product'}
+                    {btnLoading ? <Loader /> : t('updateProduct')}
                   </Button>
                 </form>
               )}
@@ -209,18 +209,17 @@ const ProductPage = () => {
                 {user && user.role === 'admin' && (
                   <form onSubmit={handleSubmitImage} className="flex flex-col gap-4 mt-4">
                     <div>
-                      <Label>Upload New Images</Label>
+                      <Label>{t('uploadNewImages')}</Label>
                       <Input
                         type="file"
                         name="files"
                         multiple
                         accept="image/*"
                         onChange={(e) => setUpdatedImages(e.target.files)}
-                        className="block w-full mt-1 text-sm"
                       />
                     </div>
                     <Button type="submit" disabled={btnLoading}>
-                      {btnLoading ? 'Updating...' : 'Update Image'}
+                      {btnLoading ? t('updating') : t('updateImage')}
                     </Button>
                   </form>
                 )}
@@ -232,12 +231,12 @@ const ProductPage = () => {
                 <p className="text-xl font-semibold">₹{prod.price}</p>
                 {isAuth ? (
                   prod.stock <= 0 ? (
-                    <p className="text-red-600 text-2xl">Out of Stock</p>
+                    <p className="text-red-600 text-2xl">{t('outOfStock')}</p>
                   ) : (
-                    <Button onClick={addToCartHandler}>Add To Cart</Button>
+                    <Button onClick={addToCartHandler}>{t('addToCart')}</Button>
                   )
                 ) : (
-                  <p className="text-blue-500">Please login to add something in cart</p>
+                  <p className="text-blue-500">{t('pleaseLogin')}</p>
                 )}
               </div>
             </div>
@@ -247,7 +246,7 @@ const ProductPage = () => {
 
       {relatedProduct?.length > 0 && !loading && (
         <div className="mt-12">
-          <h2 className="text-xl font-bold">Related Products</h2>
+          <h2 className="text-xl font-bold">{t('relatedProducts')}</h2>
           <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
             {relatedProduct.map((e) => (
               <ProductCard key={e._id} product={e} />

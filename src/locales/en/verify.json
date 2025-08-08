@@ -1,0 +1,10 @@
+{
+    "title": "Verify using OTP",
+    "subtitle": "If you didn’t receive the OTP, please check your spam folder.",
+    "label": "Enter OTP",
+    "placeholder": "6-digit code",
+    "submit": "Submit",
+    "canResend": "You can now resend the OTP",
+    "timeRemaining": "Time remaining",
+    "resend": "Resend OTP"
+  }

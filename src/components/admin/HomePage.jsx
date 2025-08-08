@@ -20,19 +20,13 @@ import {
 import { Input } from '../ui/input';
 import { categories, server } from '@/main';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import toast from 'react-hot-toast';
 
 const HomePage = () => {
   const { product, page, setPage, fetchProducts, loading, totalPages } = ProductData();
 
-  const nextPage = () => {
-    setPage(page + 1);
-  };
-
-  const prevPage = () => {
-    setPage(page - 1);
-  };
+  const nextPage = () => setPage(page + 1);
+  const prevPage = () => setPage(page - 1);
 
   const [open, setOpen] = useState(false);
 
@@ -77,10 +71,11 @@ const HomePage = () => {
     try {
       const { data } = await axios.post(`${server}/api/product/new`, form, {
         headers: {
-          'content-Type': 'multipart/form-data',
-          token: Cookies.get('token')
-        }
+          'Content-Type': 'multipart/form-data',
+        },
+        withCredentials: true,
       });
+
       toast.success(data.message);
       setOpen(false);
       setFormData({
@@ -103,7 +98,7 @@ const HomePage = () => {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">All Products</h2>
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
+          <DialogTrigger>
             <Button className="mb-4">Add Product</Button>
           </DialogTrigger>
           <DialogContent>
@@ -130,7 +125,7 @@ const HomePage = () => {
                 value={formData.category}
                 onChange={handleChange}
                 required
-                className="w-full border rounded px-3 py-2"
+                className="w-full rounded px-3 py-2 bg-gray-900 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Select Category</option>
                 {categories.map((e) => (

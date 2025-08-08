@@ -1,0 +1,41 @@
+{
+    "home": "Home",
+    "products": "Products",
+    "account": "Account",
+    "login": "Login",
+    "logout": "Logout",
+    "yourOrders": "Your Orders",
+    "dashboard": "Dashboard",
+    "language": "Language",
+    "english": "English",
+    "bengali": "Bengali",
+
+
+  "brand": "QuickCart",
+  "tagline": "Your one-stop shop for everything",
+  "about": "About Us",
+  "contact": "Contact",
+  "privacy": "Privacy Policy",
+  "terms": "Terms and Conditions",
+  "follow": "Follow Us",
+
+
+  "title": "Welcome to your dream shop",
+  "subtitle": "Discover amazing products and deals just for you",
+  "shopNow": "Shop Now",
+
+
+  
+    "adminPanel": "Admin Panel",
+    "adminDashboard": "Admin Dashboard",
+    "orders": "Orders",
+    "info": "Info",
+    "close": "Close",
+
+    
+    "altText": "Page Not Found",
+    "goHomeBtn": "Go to home"
+  
+  
+  }
+  

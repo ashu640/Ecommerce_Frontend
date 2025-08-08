@@ -1,83 +1,89 @@
 import { server } from '@/main';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import { createContext, useContext, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-const cartContext=createContext()
 
-export const CartProvider=({children})=>{
-    const token=Cookies.get("token");
-    const [loading, setLoading] = useState(false)
-    const [totalItem,setTotalItem]=useState(0)
-    const [subTotal, setSubTotal] = useState(0)
+const cartContext = createContext();
 
-    const [cart,setCart]=useState([]);
-    async function fetchCart(){
-        try {
-            const {data}=await axios.get(`${server}/api/cart/all`,{
-                headers:{
-                    token:Cookies.get("token"),
-                }
-            });
-            setCart(data.cart);
-            setTotalItem(data.sumOfQuantities);
-            setSubTotal(data.subTotal);
+export const CartProvider = ({ children }) => {
+  const [loading, setLoading] = useState(false);
+  const [totalItem, setTotalItem] = useState(0);
+  const [subTotal, setSubTotal] = useState(0);
+  const [cart, setCart] = useState([]);
 
-            
-        } catch (error) {
-            console.log(error);
-            
-        }
+  async function fetchCart() {
+    try {
+      const { data } = await axios.get(`${server}/api/cart/all`, {
+        withCredentials: true,
+      });
+      setCart(data.cart);
+      setTotalItem(data.sumOfQuantities);
+      setSubTotal(data.subTotal);
+    } catch (error) {
+      console.log(error);
     }
-    async function  addToCart(product){
-        try {
-            const {data}=await axios.post(`${server}/api/cart/add`,{product},{
-                headers:{
-                    token,
-                }
-            })
-            toast.success(data.message);
-            fetchCart();
-            
-        } catch (error) {
-            toast.error(error.response.data.message)
-            
-        }
-    }
-    async function updateCart(action,id){
-        try {
-            const {data}=await axios.post(`${server}/api/cart/update?action=${action}`,{id},{
-            headers:{
-                token,
-            }})
-            fetchCart();
-            
-        } catch (error) {
-            toast.error(error.response.data.message)
-            
-        }
-    }
-    async function removeFromCart(id){
-        try {
-            const {data}=await axios.get(`${server}/api/cart/remove/${id}`,{
-                headers:{
-                    token,
-                }})
-              toast.success(data.message)
-              fetchCart();
+  }
 
-            
-        } catch (error) {
-            toast.error(error.response.data.message)
-            
-        }
+  async function addToCart(product) {
+    try {
+      const { data } = await axios.post(
+        `${server}/api/cart/add`,
+        { product },
+        { withCredentials: true }
+      );
+      toast.success(data.message);
+      fetchCart();
+    } catch (error) {
+      toast.error(error.response.data.message);
     }
-    useEffect(()=>{
-        fetchCart()
-    },[])
+  }
 
-    return <cartContext.Provider value={{cart,totalItem,subTotal,fetchCart,addToCart,setTotalItem,updateCart,removeFromCart}}>{children}</cartContext.Provider>
+  async function updateCart(action, id) {
+    try {
+      const { data } = await axios.post(
+        `${server}/api/cart/update?action=${action}`,
+        { id },
+        { withCredentials: true }
+      );
+      fetchCart();
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  }
+
+  async function removeFromCart(id) {
+    try {
+      const { data } = await axios.get(
+        `${server}/api/cart/remove/${id}`,
+        { withCredentials: true }
+      );
+      toast.success(data.message);
+      fetchCart();
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  }
+
+  useEffect(() => {
+    fetchCart();
+  }, []);
+
+  return (
+    <cartContext.Provider
+      value={{
+        cart,
+        totalItem,
+        subTotal,
+        fetchCart,
+        addToCart,
+        setTotalItem,
+        updateCart,
+        removeFromCart,
+      }}
+    >
+      {children}
+    </cartContext.Provider>
+  );
 };
 
-
-export const CartData=()=>useContext(cartContext);
+export const CartData = () => useContext(cartContext);

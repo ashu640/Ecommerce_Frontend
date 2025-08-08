@@ -22,7 +22,7 @@ const Payment = () => {
   async function fetchAddress() {
     try {
       const { data } = await axios.get(`${server}/api/address/${id}`, {
-        headers: { token: Cookies.get('token') },
+        withCredentials: true,
       });
       setAddress(data);
     } catch (error) {
@@ -48,9 +48,7 @@ const Payment = () => {
             address: address.address,
           },
           {
-            headers: {
-              token: Cookies.get('token'),
-            },
+            withCredentials: true,
           }
         );
         setLoading(false);
@@ -77,9 +75,7 @@ const Payment = () => {
             address: address.address,
           },
           {
-            headers: {
-              token: Cookies.get('token'),
-            },
+            withCredentials: true,
           }
         );
 

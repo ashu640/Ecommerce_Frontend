@@ -31,9 +31,8 @@ const InfoPage = () => {
   async function fetchStats() {
     try {
       const { data } = await axios.get(`${server}/api/stats`, {
-        headers: {
-          token: Cookies.get("token"),
-        },
+       
+          withCredentials: true,
       });
 
       setCod(data.cod);

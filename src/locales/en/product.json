@@ -1,0 +1,17 @@
+{
+    "new": "NEW",
+    "viewProduct": "View Product",
+    "filter": "Filter",
+  "searchTitle": "Search Title",
+  "category": "Category",
+  "price": "Price",
+  "all": "All",
+  "select": "Select",
+  "lowToHigh": "Low to High",
+  "highToLow": "High to Low",
+  "clearFilter": "Clear Filter",
+  "noProductsFound": "No products found",
+  "filterButton": "Filter"
+
+  }
+  

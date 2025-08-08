@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import Loading from '@/components/Loading';
 import ProductCard from '@/components/ProductCard';
 import { Button } from '@/components/ui/button';
@@ -11,10 +12,12 @@ import {
 } from '@/components/ui/pagination';
 import { ProductData } from '@/context/productContext';
 import { Filter } from 'lucide-react';
-import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const Products = () => {
   const [show, setShow] = useState(false);
+  const { t } = useTranslation('product');
+
   const {
     search,
     setSearch,
@@ -60,13 +63,13 @@ const Products = () => {
           >
             ✕
           </button>
-          <h2 className='text-lg font-bold mb-2'>Filter</h2>
+          <h2 className='text-lg font-bold mb-2'>{t('filter')}</h2>
 
           <div className='mb-4'>
-            <label className='block text-sm font-medium mb-2'>Search Title</label>
+            <label className='block text-sm font-medium mb-2'>{t('searchTitle')}</label>
             <Input
               type='text'
-              placeholder='Search Title'
+              placeholder={t('searchTitle')}
               className='w-full p-2 border rounded-full'
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -74,13 +77,13 @@ const Products = () => {
           </div>
 
           <div className='mb-4'>
-            <label className='block text-sm font-medium mb-2'>Category</label>
+            <label className='block text-sm font-medium mb-2'>{t('category')}</label>
             <select
               className='w-full p-2 border rounded-md dark:bg-gray-900 dark:text-white'
               value={category}
               onChange={(e) => setCategory(e.target.value)}
             >
-              <option value=''>All</option>
+              <option value=''>{t('all')}</option>
               {categories.map((e) => (
                 <option value={e} key={e}>
                   {e}
@@ -90,20 +93,20 @@ const Products = () => {
           </div>
 
           <div className='mb-4'>
-            <label className='block text-sm font-medium mb-2'>Price</label>
+            <label className='block text-sm font-medium mb-2'>{t('price')}</label>
             <select
               className='w-full p-2 border rounded-md dark:bg-gray-900 dark:text-white'
               value={price}
               onChange={(e) => setPrice(e.target.value)}
             >
-              <option value=''>Select</option>
-              <option value='lowToHigh'>Low to High</option>
-              <option value='highToLow'>High to Low</option>
+              <option value=''>{t('select')}</option>
+              <option value='lowToHigh'>{t('lowToHigh')}</option>
+              <option value='highToLow'>{t('highToLow')}</option>
             </select>
           </div>
 
           <Button className='mt-2 w-full' onClick={clearFilter}>
-            Clear Filter
+            {t('clearFilter')}
           </Button>
         </div>
       </div>
@@ -114,7 +117,7 @@ const Products = () => {
           onClick={() => setShow(true)}
           className='md:hidden bg-blue-500 text-white px-4 py-2 rounded-md mb-4 flex items-center gap-2'
         >
-          <Filter size={18} /> Filter
+          <Filter size={18} /> {t('filterButton')}
         </button>
 
         {/* Product Grid */}
@@ -129,7 +132,7 @@ const Products = () => {
                 </div>
               ))
             ) : (
-              <p className='text-center col-span-full'>No products found</p>
+              <p className='text-center col-span-full'>{t('noProductsFound')}</p>
             )}
           </div>
         )}

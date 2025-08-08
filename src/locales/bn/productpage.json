@@ -1,0 +1,22 @@
+{
+    "title": "শিরোনাম",
+    "description": "বর্ণনা",
+    "category": "বিভাগ",
+    "price": "মূল্য",
+    "stock": "স্টক",
+    "productTitle": "পণ্যের শিরোনাম",
+    "productPrice": "পণ্যের মূল্য",
+    "productStock": "পণ্যের স্টক",
+    "updateProduct": "পণ্য আপডেট করুন",
+    "updateImage": "ছবি আপডেট করুন",
+    "uploadNewImages": "নতুন ছবি আপলোড করুন",
+    "updating": "আপডেট করা হচ্ছে...",
+    "addToCart": "কার্টে যুক্ত করুন",
+    "outOfStock": "স্টক শেষ",
+    "pleaseLogin": "কার্টে কিছু যোগ করতে লগইন করুন",
+    "relatedProducts": "সংশ্লিষ্ট পণ্যসমূহ",
+    "updateFailed": "আপডেট ব্যর্থ হয়েছে",
+    "imageUpdateFailed": "ছবি আপডেট ব্যর্থ হয়েছে",
+    "pleaseSelectImages": "অনুগ্রহ করে নতুন ছবি নির্বাচন করুন"
+  }
+  

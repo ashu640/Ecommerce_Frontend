@@ -1,0 +1,17 @@
+{
+    "new": "নতুন",
+    "viewProduct": "পণ্য দেখুন",
+    "filter": "ফিল্টার",
+    "searchTitle": "শিরোনাম অনুসন্ধান করুন",
+    "category": "বিভাগ",
+    "price": "মূল্য",
+    "all": "সব",
+    "select": "নির্বাচন করুন",
+    "lowToHigh": "কম থেকে বেশি",
+    "highToLow": "বেশি থেকে কম",
+    "clearFilter": "ফিল্টার রিসেট করুন",
+    "noProductsFound": "কোনও পণ্য পাওয়া যায়নি",
+    "filterButton": "ফিল্টার"
+    
+  }
+  

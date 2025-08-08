@@ -1,0 +1,19 @@
+{
+    "title": "Checkout",
+    "no_address": "No address found",
+    "add_new": "Add New Address",
+    "use_address": "Use Address",
+    "add_modal_title": "Add New Address",
+    "address_placeholder": "Address",
+    "phone_placeholder": "Phone",
+    "close_button": "Close",
+    "add_button": "Add Address",
+    "address_label": "Address",
+    "phone_label": "Phone",
+    "confirm_delete": "Are you sure you want to delete",
+    "success_add": "Address added successfully",
+    "error_add": "Failed to add address",
+    "success_delete": "Address deleted successfully",
+    "error_delete": "Failed to delete address"
+  }
+  

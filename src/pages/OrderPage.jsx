@@ -4,28 +4,25 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserData } from "@/context/UserContext";
 import { server } from "@/main";
 import axios from "axios";
-import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const OrderPage = () => {
+  const { t } = useTranslation("orders");
   const { id } = useParams();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const { user } = UserData();
-
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrder = async () => {
       try {
         const { data } = await axios.get(`${server}/api/order/${id}`, {
-          headers: {
-            token: Cookies.get("token"),
-          },
+          withCredentials: true,
         });
-
         setOrder(data);
       } catch (error) {
         console.log(error);
@@ -45,12 +42,13 @@ const OrderPage = () => {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center text-center">
         <h1 className="text-2xl font-bold text-red-600">
-          No Order With this id
+          {t("noOrder")}
         </h1>
-        <Button onClick={() => navigate("/products")}>Shop Now</Button>
+        <Button onClick={() => navigate("/products")}>{t("shopNow")}</Button>
       </div>
     );
   }
+
   return (
     <div className="container mx-auto py-6 px-4">
       {user._id === order.user._id || user.role === "admin" ? (
@@ -59,74 +57,34 @@ const OrderPage = () => {
             <CardHeader>
               <div className="flex justify-between">
                 <CardTitle className="text-2xl font-bold">
-                  Order Details
+                  {t("orderDetails")}
                 </CardTitle>
-                <Button onClick={() => window.print()}>Print Order</Button>
+                <Button onClick={() => window.print()}>{t("printOrder")}</Button>
               </div>
             </CardHeader>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4">
               <div>
-                <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+                <h2 className="text-xl font-semibold mb-4">{t("summary")}</h2>
+                <p><strong>{t("orderId")}: </strong>{order._id}</p>
                 <p>
-                  <strong>Order Id: </strong>
-
-                  {order._id}
-                </p>
-                <p>
-                  <strong>Status: </strong>
-                  <span
-                    className={`${
-                      order.status === "Pending"
-                        ? "text-yellow-500"
-                        : "text-green-500"
-                    }`}
-                  >
-                    {order.status}
+                  <strong>{t("status")}: </strong>
+                  <span className={`${order.status === "Pending" ? "text-yellow-500" : "text-green-500"}`}>
+                    {t(order.status.toLowerCase())}
                   </span>
                 </p>
-                <p>
-                  <strong>Total Items: </strong>
-
-                  {order.items.length}
-                </p>
-
-                <p>
-                  <strong>Payment Method: </strong>
-
-                  {order.method}
-                </p>
-
-                <p>
-                  <strong>SubTotal: </strong>
-
-                  {order.subTotal}
-                </p>
-
-                <p>
-                  <strong>Placed At: </strong>
-
-                  {new Date(order.createdAt).toLocaleDateString()}
-                </p>
-
-                <p>
-                  <strong>Paid At: </strong>
-
-                  {order.paidAt || "Payment Through COD"}
-                </p>
+                <p><strong>{t("totalItems")}: </strong>{order.items.length}</p>
+                <p><strong>{t("paymentMethod")}: </strong>{order.method}</p>
+                <p><strong>{t("subTotal")}: </strong>₹{order.subTotal}</p>
+                <p><strong>{t("placedAt")}: </strong>{new Date(order.createdAt).toLocaleDateString()}</p>
+                <p><strong>{t("paidAt")}: </strong>{order.paidAt || t("cod")}</p>
               </div>
 
               <div>
-                <h2 className="text-xl font-semibold mb-4">Shipping Details</h2>
-                <p>
-                  <strong>Phone:</strong> {order.phone}
-                </p>
-                <p>
-                  <strong>Address:</strong> {order.address}
-                </p>
-                <p>
-                  <strong>User:</strong> {order.user?.email || "Guest"}
-                </p>
+                <h2 className="text-xl font-semibold mb-4">{t("shippingDetails")}</h2>
+                <p><strong>{t("phone")}: </strong> {order.phone}</p>
+                <p><strong>{t("address")}: </strong> {order.address}</p>
+                <p><strong>{t("user")}: </strong> {order.user?.email || t("guest")}: </p>
               </div>
             </div>
           </Card>
@@ -141,16 +99,10 @@ const OrderPage = () => {
                     className="max-w-full max-h-full object-contain"
                   />
                 </Link>
-
                 <CardContent>
                   <h3 className="text-lg font-semibold">{e.product.title}</h3>
-                  <p>
-                    <strong>Quantity:</strong>
-                    {e.quantity}
-                  </p>
-                  <p>
-                    <strong>Price:</strong>₹{e.product.price}
-                  </p>
+                  <p><strong>{t("quantity")}: </strong> {e.quantity}</p>
+                  <p><strong>{t("price")}: </strong> ₹{e.product.price}</p>
                 </CardContent>
               </Card>
             ))}
@@ -158,9 +110,10 @@ const OrderPage = () => {
         </>
       ) : (
         <p className="text-red-500 text-3xl text-center">
-          This is not your order <br />
-          <Link to={"/"} className="mt-4 underline text-blue-400">
-            Go to home page
+          {t("notYourOrder")}
+          <br />
+          <Link to="/" className="mt-4 underline text-blue-400">
+            {t("goHome")}
           </Link>
         </p>
       )}

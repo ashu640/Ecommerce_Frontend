@@ -4,6 +4,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import toast from 'react-hot-toast';
 import { Trash } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import Loading from '@/components/Loading';
 import { Button } from '@/components/ui/button';
@@ -12,21 +13,16 @@ import { Input } from '@/components/ui/input';
 import { server } from '@/main';
 
 const Checkout = () => {
+  const { t } = useTranslation('checkout');
   const [address, setAddress] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
-  const [newAddress, setNewAddress] = useState({
-    address: '',
-    phone: '',
-  });
+  const [newAddress, setNewAddress] = useState({ address: '', phone: '' });
 
-  // Fetch all addresses
   async function fetchAddress() {
     try {
       const { data } = await axios.get(`${server}/api/address/all`, {
-        headers: {
-          token: Cookies.get('token'),
-        },
+        withCredentials: true,
       });
       setAddress(data);
       setLoading(false);
@@ -36,20 +32,12 @@ const Checkout = () => {
     }
   }
 
-  // Handle new address submission
   const handleAddAddress = async () => {
     try {
       const { data } = await axios.post(
         `${server}/api/address/new`,
-        {
-          address: newAddress.address,
-          phone: newAddress.phone,
-        },
-        {
-          headers: {
-            token: Cookies.get('token'),
-          },
-        }
+        newAddress,
+        { withCredentials: true }
       );
 
       if (data.message) {
@@ -59,28 +47,25 @@ const Checkout = () => {
         setModalOpen(false);
       }
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Failed to add address');
+      toast.error(error.response?.data?.error || t('errors.addFail'));
     }
   };
 
-  // Handle address deletion
   const deleteHandler = async (id) => {
-   if(confirm("Are you sure you want to delete")){
-    try {
+    if (confirm(t('confirmDelete'))) {
+      try {
         const { data } = await axios.delete(`${server}/api/address/${id}`, {
-          headers: {
-            token: Cookies.get('token'),
-          },
+          withCredentials: true,
         });
-  
+
         if (data.message) {
           toast.success(data.message);
           fetchAddress();
         }
       } catch (error) {
-        toast.error(error.response?.data?.error || 'Failed to delete address');
+        toast.error(error.response?.data?.error || t('errors.deleteFail'));
       }
-   }
+    }
   };
 
   useEffect(() => {
@@ -89,68 +74,69 @@ const Checkout = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 min-h-[60vh]">
-      <h1 className="text-3xl font-bold mb-6 text-center">Checkout</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">{t('title')}</h1>
 
       {loading ? (
         <Loading />
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {address && address.length > 0 ? (
+            {address.length > 0 ? (
               address.map((e) => (
                 <div className="p-4 border rounded-lg shadow-sm" key={e._id}>
                   <div className="flex justify-between items-start">
-                    <h3 className="text-lg font-semibold">Address - {e.address}</h3>
+                    <h3 className="text-lg font-semibold">
+                      {t('address')}: {e.address}
+                    </h3>
                     <Button variant="destructive" size="icon" onClick={() => deleteHandler(e._id)}>
                       <Trash className="w-4 h-4" />
                     </Button>
                   </div>
-                  <p className="text-sm">Phone - {e.phone}</p>
+                  <p className="text-sm">{t('phone')}: {e.phone}</p>
                   <Link to={`/payment/${e._id}`}>
                     <Button variant="outline" className="mt-2 w-full">
-                      Use Address
+                      {t('useAddress')}
                     </Button>
                   </Link>
                 </div>
               ))
             ) : (
-              <p>No address found</p>
+              <p>{t('noAddress')}</p>
             )}
 
-            {/* Add New Address Card */}
             <div
               className="p-4 border rounded-lg shadow-sm flex items-center justify-center cursor-pointer hover:bg-gray-100"
               onClick={() => setModalOpen(true)}
             >
-              <span className="text-md font-semibold">Add New Address</span>
+              <span className="text-md font-semibold">{t('addNew')}</span>
             </div>
           </div>
 
-          {/* Add Address Modal */}
+          {/* Modal */}
           <Dialog open={modalOpen} onOpenChange={setModalOpen}>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Add New Address</DialogTitle>
+                <DialogTitle>{t('addNew')}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <Input
-                  placeholder="Address"
+                  placeholder={t('address')}
                   value={newAddress.address}
                   onChange={(e) => setNewAddress({ ...newAddress, address: e.target.value })}
                 />
                 <Input
                   type="number"
-                  placeholder="Phone"
+                  placeholder={t('phone')}
                   value={newAddress.phone}
                   onChange={(e) => setNewAddress({ ...newAddress, phone: e.target.value })}
                 />
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setModalOpen(false)}>
-                  Close
+                  {t('close')}
                 </Button>
                 <Button variant="outline" onClick={handleAddAddress}>
-                  Add Address
+                  {t('addBtn')}
                 </Button>
               </DialogFooter>
             </DialogContent>
