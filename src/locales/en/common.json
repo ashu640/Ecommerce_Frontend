@@ -1,41 +1,37 @@
 {
+  "brand": {
+    "name": "Kotha"
+  },
+  "search": {
+    "placeholder": "Search books by title, author"
+  },
+  "help": {
+    "text": "Need help?"
+  },
+  "nav": {
     "home": "Home",
-    "products": "Products",
-    "account": "Account",
+    "about": "About",
+    "catalogue": "Catalogue",
+    "contact": "Contact",
     "login": "Login",
     "logout": "Logout",
-    "yourOrders": "Your Orders",
+    "account": "Account",
+    "orders": "Your Orders",
     "dashboard": "Dashboard",
-    "language": "Language",
-    "english": "English",
-    "bengali": "Bengali",
-
-
-  "brand": "QuickCart",
-  "tagline": "Your one-stop shop for everything",
-  "about": "About Us",
-  "contact": "Contact",
-  "privacy": "Privacy Policy",
-  "terms": "Terms and Conditions",
-  "follow": "Follow Us",
-
-
-  "title": "Welcome to your dream shop",
-  "subtitle": "Discover amazing products and deals just for you",
-  "shopNow": "Shop Now",
-
-
-  
-    "adminPanel": "Admin Panel",
-    "adminDashboard": "Admin Dashboard",
-    "orders": "Orders",
-    "info": "Info",
-    "close": "Close",
-
-    
-    "altText": "Page Not Found",
-    "goHomeBtn": "Go to home"
-  
-  
+    "cart": "Cart",
+    "categories": "Shop Categories",
+    "authors": "Authors",
+    "allProducts": "All Products",
+    "publishers": "Publishers",
+    "blog": "Blog",
+    "deal": "Today's Deal"
+  },
+  "login": {
+    "title": "Login",
+    "description": "Please login to continue"
+  },
+  "verify": {
+    "title": "Verify OTP",
+    "subtitle": "Enter the OTP sent to your email"
   }
-  
+}

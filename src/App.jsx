@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home.jsx'
 import Login from './pages/Login.jsx'
 import Navbar from './components/Navbar.jsx'
@@ -16,35 +16,41 @@ import OrderProcessing from './pages/OrderProcessing.jsx'
 import Orders from './pages/Orders.jsx'
 import OrderPage from './pages/OrderPage.jsx'
 import AdminDashBoard from './pages/AdminDashBoard.jsx'
+import Scrolltop from './components/scrolltop.jsx'
+import Catalogue from './pages/Catalogue.jsx'
+import ContactUs from './pages/Contactus.jsx'
+import Publisher from './pages/Publisher.jsx'
+import BlogPage from './pages/Blog.jsx'
 
 const App = () => {
   const { isAuth, loading } = UserData();
 
+  if (loading) return <Loading />;
+
   return (
     <>
-      {loading ? (
-        <Loading />
-      ) : (
-        <BrowserRouter>
-          <Navbar />
-          <Routes>
-            <Route path='/' element={<Home />} />
-            <Route path='/products' element={<Products />} />
-            <Route path='/product/:id' element={<ProductPage />} />
-            <Route path='/cart' element={isAuth ? <Cart /> : <Login />} />
-            <Route path='/orders' element={isAuth ? <Orders /> : <Login />} />
-            <Route path='/order/:id' element={isAuth ? <OrderPage /> : <Login />} />
-            <Route path='/admin/dashboard' element={isAuth ? <AdminDashBoard /> : <Login />} />
-            <Route path='/checkout' element={isAuth ? <Checkout /> : <Login />} />
-            <Route path='/payment/:id' element={isAuth ? <Payment /> : <Login />} />
-            <Route path='/ordersuccess' element={isAuth ? <OrderProcessing /> : <Login />} />
-            <Route path='/login' element={isAuth ? <Home /> : <Login />} />
-            <Route path='/verify' element={isAuth ? <Home /> : <Verify />} />
-            <Route path='*' element={<NotFound />} />
-          </Routes>
-          <Footer />
-        </BrowserRouter>
-      )}
+      <Navbar />
+      <Scrolltop></Scrolltop>
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/products' element={<Products />} />
+        <Route path='/blog' element={<BlogPage></BlogPage>} />
+        <Route path='/contactus' element={<ContactUs></ContactUs>} />
+        <Route path='/publisher' element={<Publisher></Publisher>} />
+        <Route path='/product/:id' element={<ProductPage />} />
+        <Route path='/catalogue' element={<Catalogue/>} />
+        <Route path='/cart' element={isAuth ? <Cart /> : <Login />} />
+        <Route path='/orders' element={isAuth ? <Orders /> : <Login />} />
+        <Route path='/order/:id' element={isAuth ? <OrderPage /> : <Login />} />
+        <Route path='/admin/dashboard' element={isAuth ? <AdminDashBoard /> : <Login />} />
+        <Route path='/checkout' element={isAuth ? <Checkout /> : <Login />} />
+        <Route path='/payment/:id' element={isAuth ? <Payment /> : <Login />} />
+        <Route path='/ordersuccess' element={isAuth ? <OrderProcessing /> : <Login />} />
+      
+  
+        <Route path='*' element={<NotFound />} />
+      </Routes>
+      <Footer />
     </>
   );
 };

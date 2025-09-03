@@ -11,13 +11,13 @@ export const UserProvider = ({ children }) => {
   const [btnLoading, setBtnLoading] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
 
-  async function LoginUser(email, navigate) {
+  async function LoginUser(email) {
     setBtnLoading(true);
     try {
       const { data } = await axios.post(`${server}/api/user/login`, { email });
       toast.success(data.message);
       localStorage.setItem('email', email);
-      navigate('/verify');
+      // navigate('/verify');
     } catch (error) {
       toast.error(error.response.data.message);
     }
@@ -77,7 +77,7 @@ export const UserProvider = ({ children }) => {
       toast.success('Logged Out');
   
       // Redirect to login
-      navigate('/login');
+      navigate('/');
     } catch (error) {
       console.error('Logout failed:', error);
       toast.error('Failed to logout');

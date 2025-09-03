@@ -9,6 +9,7 @@ import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
+import { useTranslation } from 'react-i18next';
 
 const Payment = () => {
   const { cart, subTotal, fetchCart } = CartData();
@@ -16,8 +17,8 @@ const Payment = () => {
   const [method, setMethod] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
   const { id } = useParams();
+  const { t, i18n } = useTranslation("payment"); // <-- i18n hook
 
   async function fetchAddress() {
     try {
@@ -57,7 +58,7 @@ const Payment = () => {
         navigate('/orders');
       } catch (error) {
         setLoading(false);
-        toast.error(error.response?.data?.message || 'COD failed');
+        toast.error(error.response?.data?.message || t('codFailed'));
       }
     }
 
@@ -82,11 +83,11 @@ const Payment = () => {
         if (data.url) {
           window.location.href = data.url;
         } else {
-          toast.error('Failed to create payment session');
+          toast.error(t('sessionFailed'));
         }
         setLoading(false);
       } catch (error) {
-        toast.error('Payment failed. Please try again');
+        toast.error(t('paymentFailed'));
         setLoading(false);
       }
     }
@@ -99,10 +100,10 @@ const Payment = () => {
       ) : (
         <div className="container mx-auto px-4 py-8">
           <div className="space-y-8">
-            <h2 className="text-3xl font-bold text-center">Proceed to Payment</h2>
+            <h2 className="text-3xl font-bold text-center">{t('title')}</h2>
 
             <div>
-              <h3 className="text-xl font-semibold">Products</h3>
+              <h3 className="text-xl font-semibold">{t('products')}</h3>
               <Separator className="my-2" />
               <div className="space-y-4">
                 {cart &&
@@ -117,7 +118,11 @@ const Payment = () => {
                         className="w-16 h-16 object-cover rounded mb-4 md:mb-0"
                       />
                       <div className="flex-1 md:ml-4 text-center md:text-left">
-                        <h2 className="text-lg font-medium">{e.product.title}</h2>
+                        {/* ✅ FIX: show title in current language */}
+                        <h2 className="text-lg font-medium">
+                          {e.product.title[i18n.language]}
+                        </h2>
+
                         <p className="text-sm text-muted-foreground dark:text-gray-400">
                           ₹ {e.product.price} x {e.quantity}
                         </p>
@@ -131,33 +136,33 @@ const Payment = () => {
             </div>
 
             <div className="text-lg font-medium text-center">
-              Total Price to be Paid: ₹{subTotal}
+              {t('total')}: ₹{subTotal}
             </div>
 
             {address && (
               <div className="bg-card p-4 rounded-lg shadow border space-y-4 dark:border-gray-700">
-                <h3 className="text-lg font-semibold text-center">Details</h3>
+                <h3 className="text-lg font-semibold text-center">{t('details')}</h3>
                 <Separator className="my-2" />
                 <div className="flex flex-col space-y-0">
-                  <h4 className="font-semibold mb-1">Delivery Address</h4>
+                  <h4 className="font-semibold mb-1">{t('deliveryAddress')}</h4>
                   <p className="text-sm text-muted-foreground dark:text-gray-400">
-                    <strong>Address:</strong> {address.address}
+                    <strong>{t('address')}:</strong> {address.address}
                   </p>
                   <p className="text-sm text-muted-foreground dark:text-gray-400">
-                    <strong>Phone:</strong> {address.phone}
+                    <strong>{t('phone')}:</strong> {address.phone}
                   </p>
                 </div>
 
                 <div className="w-full md:w-1/2">
-                  <h4 className="font-semibold mb-1">Select Payment Method</h4>
+                  <h4 className="font-semibold mb-1">{t('selectMethod')}</h4>
                   <select
                     value={method}
                     onChange={(e) => setMethod(e.target.value)}
                     className="w-full p-2 border rounded-lg bg-card dark:bg-gray-900 dark:text-white"
                   >
-                    <option value="">Select payment method</option>
-                    <option value="cod">Cash on Delivery (COD)</option>
-                    <option value="online">Online Payment</option>
+                    <option value="">{t('selectOption')}</option>
+                    <option value="cod">{t('cod')}</option>
+                    <option value="online">{t('online')}</option>
                   </select>
                 </div>
               </div>
@@ -168,7 +173,11 @@ const Payment = () => {
               onClick={paymentHandler}
               disabled={!method || !address}
             >
-              {method === 'cod' ? 'Place Order' : method === 'online' ? 'Proceed to Payment' : 'Select Payment Method'}
+              {method === 'cod'
+                ? t('placeOrder')
+                : method === 'online'
+                ? t('proceedOnline')
+                : t('selectBtn')}
             </Button>
           </div>
         </div>

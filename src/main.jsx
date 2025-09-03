@@ -7,8 +7,11 @@ import { UserProvider } from './context/UserContext.jsx'
 import { ProductProvider } from './context/productContext'
 import { CartProvider } from './context/cartContext'
 import './i18n';
-export const server="https://ecommerce-15v7.onrender.com";
- export const categories = [
+import { BrowserRouter } from "react-router-dom";
+
+export const server = "https://ecommerce-15v7.onrender.com";
+
+export const categories = [
   "Electronics",
   "Mobile Phones & Accessories",
   "Laptops & Computers",
@@ -18,7 +21,7 @@ export const server="https://ecommerce-15v7.onrender.com";
   "Wearables",
   "Gaming Consoles",
   "Power Banks & Chargers",
-  
+
   "Fashion & Clothing",
   "Men’s Clothing",
   "Women’s Clothing",
@@ -62,7 +65,7 @@ export const server="https://ecommerce-15v7.onrender.com";
   "Organic & Gourmet",
   "Baby Food",
 
-  "Books & Stationery",
+  "Books and Stationery",
   "Fiction & Non-Fiction",
   "School & College Books",
   "Competitive Exam Books",
@@ -125,17 +128,18 @@ export const server="https://ecommerce-15v7.onrender.com";
   "Digital Gift Cards"
 ];
 
-
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ThemeProvider>
-      <UserProvider>
-        <ProductProvider>
-          <CartProvider>
-    <App />
-    </CartProvider>
-    </ProductProvider>
-    </UserProvider>
-    </ThemeProvider>
+    <BrowserRouter>
+      <ThemeProvider>
+        <UserProvider>
+          <ProductProvider>
+            <CartProvider>
+              <App />
+            </CartProvider>
+          </ProductProvider>
+        </UserProvider>
+      </ThemeProvider>
+    </BrowserRouter>
   </StrictMode>,
 )

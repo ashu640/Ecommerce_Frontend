@@ -1,6 +1,8 @@
 import { server } from '@/main';
 import axios from 'axios';
 import React, { createContext, useEffect, useState, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSearchParams, useLocation } from 'react-router-dom';
 
 const ProductContext = createContext();
 
@@ -8,80 +10,118 @@ export const ProductProvider = ({ children }) => {
   const [product, setProduct] = useState([]);
   const [newProd, setNewProd] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState(search);
-  const [page, setPage] = useState(1);
+  const [error, setError] = useState(null);
   const [totalpages, setTotalpages] = useState(1);
-  const [category, setCategory] = useState("");
-  const [price, setPrice] = useState("");
   const [categories, setCategories] = useState([]);
-  const [prod, setProd] = useState([]);
+  const [authors, setAuthors] = useState([]);
+  const [prod, setProd] = useState({});
   const [relatedProduct, setRelatedProduct] = useState([]);
 
-  // Debounce effect for search input
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(search);
-    }, 400);
-    return () => clearTimeout(timer);
-  }, [search]);
+  // ✅ sync filters with URL
+  const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
 
-  // Fetch products when filters change
+  const search = (searchParams.get("search") || "").trim();
+  const category = searchParams.get("category") || "";
+  const price = searchParams.get("price") || "";
+  const author = (searchParams.get("author") || "").trim(); // ✅ NEW
+  const page = parseInt(searchParams.get("page") || "1");
+
+  // ✅ get current language from i18n
+  const { i18n } = useTranslation();
+  const lang = i18n.language || "en";
+
+  // Fetch products whenever filters or language change
   useEffect(() => {
     fetchProducts();
-  }, [debouncedSearch, category, page, price]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, category, author, page, price, lang]); // ✅ added author
 
-  // ✅ Fixed: Ensure loading ends even after success
+  // Fetch all products with filters
   async function fetchProducts() {
     setLoading(true);
+    setError(null);
     try {
       const { data } = await axios.get(
-        `${server}/api/product/all?search=${debouncedSearch}&category=${category}&sortByPrice=${price}&page=${page}`
+        `${server}/api/product/all?search=${search}&category=${category}&author=${author}&sortByPrice=${price}&page=${page}&lang=${lang}`
       );
+
       setProduct(data.products);
       setNewProd(data.newProduct);
       setCategories(data.categories);
-      setTotalpages(data.totalpages);
-    } catch (error) {
-      console.log(error);
+      setTotalpages(data.totalPages);
+      setAuthors(data.authors);
+
+    } catch (err) {
+      console.error("Error fetching products:", err);
+      setError(err.response?.data?.message || "Failed to fetch products");
     } finally {
       setLoading(false);
     }
   }
 
-  async function fetchProduct(id) {
+  // Fetch single product
+  async function fetchProduct(id, lang = "en") {
     setLoading(true);
+    setError(null);
     try {
-      const { data } = await axios.get(`${server}/api/product/${id}`);
+      const { data } = await axios.get(`${server}/api/product/${id}?lang=${lang}`);
       setProd(data.product);
       setRelatedProduct(data.relatedProduct);
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.error("Error fetching product:", err);
+      setError(err.response?.data?.message || "Failed to fetch product");
     } finally {
       setLoading(false);
     }
   }
+
+  // ✅ helpers to update filters (keeps URL in sync)
+  const updateFilter = (key, value) => {
+    if (location.pathname !== "/products") return;
+    const params = new URLSearchParams(searchParams);
+
+    if (value) {
+      params.set(key, value);
+    } else {
+      params.delete(key);
+    }
+
+    // ✅ reset page to 1 on filter change
+    if (key !== "page") {
+      params.set("page", "1");
+    }
+
+    setSearchParams(params);
+  };
 
   return (
     <ProductContext.Provider
       value={{
         loading,
+        error,
         product,
         newProd,
-        search,
-        setSearch,
         categories,
         category,
-        setCategory,
-        totalpages,
+        search,
+        author,       // ✅ expose author
         price,
-        setPrice,
         page,
-        setPage,
+        totalpages,
         prod,
         relatedProduct,
         fetchProduct,
         fetchProducts,
+        lang,
+        authors,
+
+        // expose setters via URL
+        setCategory: (val) => updateFilter("category", val),
+        setSearch: (val) => updateFilter("search", val),
+        setAuthor: (val) => updateFilter("author", val),   // ✅ NEW
+        setPrice: (val) => updateFilter("price", val),
+        setPage: (val) => updateFilter("page", val),
       }}
     >
       {children}

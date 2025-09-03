@@ -11,7 +11,9 @@
   "highToLow": "High to Low",
   "clearFilter": "Clear Filter",
   "noProductsFound": "No products found",
-  "filterButton": "Filter"
+  "filterButton": "Filter",
+  "outOfStock":"Out of Stock",
+  "author": "Author"
 
   }
   

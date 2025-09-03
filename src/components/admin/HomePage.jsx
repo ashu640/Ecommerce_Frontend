@@ -18,7 +18,7 @@ import {
   DialogTrigger
 } from '../ui/dialog';
 import { Input } from '../ui/input';
-import { categories, server } from '@/main';
+import { server } from '@/main';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
@@ -31,10 +31,16 @@ const HomePage = () => {
   const [open, setOpen] = useState(false);
 
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    category: '',
+    title_en: '',
+    title_bn: '',
+    description_en: '',
+    description_bn: '',
+    category_en: '',
+    category_bn: '',
+    author_en: '',
+    author_bn: '',
     price: '',
+    oldPrice: '',   // ✅ Added old price
     stock: '',
     images: null
   });
@@ -48,7 +54,7 @@ const HomePage = () => {
     setFormData((prev) => ({ ...prev, images: e.target.files }));
   };
 
-  const submitHanlder = async (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
 
     if (!formData.images || formData.images.length === 0) {
@@ -58,15 +64,23 @@ const HomePage = () => {
 
     const form = new FormData();
 
-    Object.entries(formData).forEach(([key, value]) => {
-      if (key === 'images') {
-        for (let i = 0; i < value.length; i++) {
-          form.append('files', value[i]);
-        }
-      } else {
-        form.append(key, value);
-      }
-    });
+    // ✅ Append fields in nested format
+    form.append("title[en]", formData.title_en);
+    form.append("title[bn]", formData.title_bn);
+    form.append("description[en]", formData.description_en);
+    form.append("description[bn]", formData.description_bn);
+    form.append("category[en]", formData.category_en);
+    form.append("category[bn]", formData.category_bn);
+    form.append("author[en]", formData.author_en);
+    form.append("author[bn]", formData.author_bn);
+    form.append("price", formData.price);
+    form.append("oldPrice", formData.oldPrice);  // ✅ Send old price
+    form.append("stock", formData.stock);
+
+    // Append images
+    for (let i = 0; i < formData.images.length; i++) {
+      form.append("files", formData.images[i]);
+    }
 
     try {
       const { data } = await axios.post(`${server}/api/product/new`, form, {
@@ -79,10 +93,16 @@ const HomePage = () => {
       toast.success(data.message);
       setOpen(false);
       setFormData({
-        title: '',
-        description: '',
-        category: '',
+        title_en: '',
+        title_bn: '',
+        description_en: '',
+        description_bn: '',
+        category_en: '',
+        category_bn: '',
+        author_en: '',
+        author_bn: '',
         price: '',
+        oldPrice: '',
         stock: '',
         images: null
       });
@@ -105,49 +125,93 @@ const HomePage = () => {
             <DialogHeader>
               <DialogTitle>Add Products</DialogTitle>
             </DialogHeader>
-            <form onSubmit={submitHanlder} className="space-y-4">
+            <form onSubmit={submitHandler} className="space-y-4">
+              {/* English Fields */}
               <Input
-                name="title"
-                placeholder="Product Title"
-                value={formData.title}
+                name="title_en"
+                placeholder="Product Title (English)"
+                value={formData.title_en}
                 onChange={handleChange}
                 required
               />
               <Input
-                name="description"
-                placeholder="Product Description"
-                value={formData.description}
+                name="description_en"
+                placeholder="Product Description (English)"
+                value={formData.description_en}
                 onChange={handleChange}
                 required
               />
-              <select
-                name="category"
-                value={formData.category}
+              <Input
+                name="category_en"
+                placeholder="Category (English)"
+                value={formData.category_en}
                 onChange={handleChange}
                 required
-                className="w-full rounded px-3 py-2 bg-gray-900 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Select Category</option>
-                {categories.map((e) => (
-                  <option value={e} key={e}>
-                    {e}
-                  </option>
-                ))}
-              </select>
+              />
+              <Input
+                name="author_en"
+                placeholder="Author (English)"
+                value={formData.author_en}
+                onChange={handleChange}
+                required
+              />
+
+              {/* Bengali Fields */}
+              <Input
+                name="title_bn"
+                placeholder="পণ্যের নাম (Bengali)"
+                value={formData.title_bn}
+                onChange={handleChange}
+                required
+              />
+              <Input
+                name="description_bn"
+                placeholder="পণ্যের বিবরণ (Bengali)"
+                value={formData.description_bn}
+                onChange={handleChange}
+                required
+              />
+              <Input
+                name="category_bn"
+                placeholder="ক্যাটেগরি (Bengali)"
+                value={formData.category_bn}
+                onChange={handleChange}
+                required
+              />
+              <Input
+                name="author_bn"
+                placeholder="লেখক (Bengali)"
+                value={formData.author_bn}
+                onChange={handleChange}
+                required
+              />
+
+              {/* Price & Old Price & Stock */}
               <Input
                 name="price"
-                placeholder="Product Price"
+                type="number"
+                placeholder="New Price"
                 value={formData.price}
                 onChange={handleChange}
                 required
               />
               <Input
+                name="oldPrice"
+                type="number"
+                placeholder="Old Price (Optional)"
+                value={formData.oldPrice}
+                onChange={handleChange}
+              />
+              <Input
                 name="stock"
+                type="number"
                 placeholder="Product Stock"
                 value={formData.stock}
                 onChange={handleChange}
                 required
               />
+
+              {/* Images */}
               <Input
                 type="file"
                 multiple
@@ -156,6 +220,7 @@ const HomePage = () => {
                 onChange={handleFileChange}
                 required
               />
+
               <Button type="submit" className="w-full">
                 Create Product
               </Button>

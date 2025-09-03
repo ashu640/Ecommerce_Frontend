@@ -5,6 +5,7 @@ import { Trash } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import i18n from 'i18next';
 
 const Cart = () => {
   const { cart, totalItem, subTotal, updateCart, removeFromCart } = CartData();
@@ -33,12 +34,14 @@ const Cart = () => {
               <div key={e._id} className="flex flex-col sm:flex-row items-center sm:items-stretch space-y-4 sm:space-y-0 sm:space-x-4 shadow-md rounded-lg p-4 border border-gray-400">
                 <img
                   src={e.product.images[0].url}
-                  alt={e.product.title}
+                  alt={e.product.title?.[i18n.language]}
                   className='w-full sm:w-20 sm:h-20 object-cover rounded-md cursor-pointer'
                   onClick={() => navigate(`/product/${e.product._id}`)}
                 />
                 <div className="flex-1 text-center sm:text-left">
-                  <h2 className='text-lg font-medium'>{e.product.title}</h2>
+                  <h2 className='text-lg font-medium'>
+                    {e.product.title?.[i18n.language]}
+                  </h2>
                   <p>{t('price')}: ₹{e.product.price}</p>
                 </div>
                 <div className="flex items-center justify-center sm:justify-start gap-2">

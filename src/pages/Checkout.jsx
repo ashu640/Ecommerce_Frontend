@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import toast from 'react-hot-toast';
 import { Trash } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -88,7 +87,11 @@ const Checkout = () => {
                     <h3 className="text-lg font-semibold">
                       {t('address')}: {e.address}
                     </h3>
-                    <Button variant="destructive" size="icon" onClick={() => deleteHandler(e._id)}>
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      onClick={() => deleteHandler(e._id)}
+                    >
                       <Trash className="w-4 h-4" />
                     </Button>
                   </div>

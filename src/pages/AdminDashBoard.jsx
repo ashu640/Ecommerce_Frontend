@@ -6,16 +6,19 @@ import { UserData } from '@/context/UserContext';
 import { Home, Info, MenuIcon, ShoppingBag, X } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const AdminDashBoard = () => {
   const [selectedPage, setSelectedPage] = useState("home");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-   const navigate=useNavigate()
-   const {user}=UserData();
-   if(user.role!=="admin"){
+  const navigate = useNavigate();
+  const { user } = UserData();
+  const { t } = useTranslation();
+
+  if (user.role !== "admin") {
     return navigate("/");
-    
-   }
+  }
+
   const renderPageContent = () => {
     switch (selectedPage) {
       case "home":
@@ -35,7 +38,7 @@ const AdminDashBoard = () => {
       <div className={`w-64 fixed lg:relative lg:translate-x-0 z-50 transition-transform duration-300 bg-background/50 backdrop-blur shadow-lg h-full 
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex flex-col h-full p-4">
-          <h1 className="text-lg font-bold mb-4">Admin Panel</h1>
+          <h1 className="text-lg font-bold mb-4">{t("adminPanel")}</h1>
           <div className="space-y-4">
             <Button
               variant="ghost"
@@ -43,7 +46,7 @@ const AdminDashBoard = () => {
               className={`w-full flex items-center gap-2 ${selectedPage === "home" ? "bg-gray-500 text-white" : ""}`}
             >
               <Home className="w-5 h-5" />
-              Home
+              {t("home")}
             </Button>
             <Button
               variant="ghost"
@@ -51,7 +54,7 @@ const AdminDashBoard = () => {
               className={`w-full flex items-center gap-2 ${selectedPage === "orders" ? "bg-gray-500 text-white" : ""}`}
             >
               <ShoppingBag className="w-5 h-5" />
-              Orders
+              {t("orders")}
             </Button>
             <Button
               variant="ghost"
@@ -59,7 +62,7 @@ const AdminDashBoard = () => {
               className={`w-full flex items-center gap-2 ${selectedPage === "info" ? "bg-gray-500 text-white" : ""}`}
             >
               <Info className="w-5 h-5" />
-              Info
+              {t("info")}
             </Button>
             <Button
               variant="ghost"
@@ -67,13 +70,13 @@ const AdminDashBoard = () => {
               onClick={() => setSidebarOpen(false)}
             >
               <X className="w-5 h-5" />
-              Close
+              {t("close")}
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Overlay when sidebar is open on mobile */}
+      {/* Overlay for mobile */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/40 z-40 lg:hidden"
@@ -92,7 +95,7 @@ const AdminDashBoard = () => {
           >
             <MenuIcon className="w-5 h-5" />
           </Button>
-          <h2 className="text-lg font-bold hidden lg:block">Admin Dashboard</h2>
+          <h2 className="text-lg font-bold hidden lg:block">{t("adminDashboard")}</h2>
         </div>
 
         {/* Page content */}

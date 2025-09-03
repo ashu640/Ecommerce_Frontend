@@ -1,0 +1,18 @@
+{
+    "catalogues": {
+      "heading": "ক্যাটালগ",
+      "uploadHeading": "নতুন ক্যাটালগ আপলোড করুন",
+      "titlePlaceholder": "শিরোনাম",
+      "descriptionPlaceholder": "বিবরণ",
+      "uploadBtn": "আপলোড",
+      "uploading": "আপলোড হচ্ছে...",
+      "download": "ডাউনলোড",
+      "delete": "মুছে ফেলুন",
+      "confirmDelete": "আপনি কি নিশ্চিত এই ক্যাটালগ মুছে ফেলতে চান?",
+      "titleFileRequired": "শিরোনাম এবং ফাইল প্রয়োজন",
+      "fetchError": "ক্যাটালগ লোড করতে ব্যর্থ",
+      "uploadError": "আপলোড ব্যর্থ হয়েছে",
+      "deleteError": "মুছে ফেলা ব্যর্থ হয়েছে"
+    }
+  }
+  

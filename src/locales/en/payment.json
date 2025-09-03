@@ -1,0 +1,20 @@
+
+{
+  "title": "Proceed to Payment",
+  "products": "Products",
+  "details": "Details",
+  "deliveryAddress": "Delivery Address",
+  "address": "Address",
+  "phone": "Phone",
+  "selectMethod": "Select Payment Method",
+  "selectOption": "Select payment method",
+  "cod": "Cash on Delivery (COD)",
+  "online": "Online Payment",
+  "placeOrder": "Place Order",
+  "proceedOnline": "Proceed to Payment",
+  "selectBtn": "Select Payment Method",
+  "total": "Total Price to be Paid",
+  "codFailed": "COD failed",
+  "sessionFailed": "Failed to create payment session",
+  "paymentFailed": "Payment failed. Please try again"
+}

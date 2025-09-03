@@ -1,0 +1,18 @@
+{
+    "catalogues": {
+      "heading": "Catalogues",
+      "uploadHeading": "Upload New Catalogue",
+      "titlePlaceholder": "Title",
+      "descriptionPlaceholder": "Description",
+      "uploadBtn": "Upload",
+      "uploading": "Uploading...",
+      "download": "Download",
+      "delete": "Delete",
+      "confirmDelete": "Are you sure to delete this catalogue?",
+      "titleFileRequired": "Title and file required",
+      "fetchError": "Failed to fetch catalogues",
+      "uploadError": "Upload failed",
+      "deleteError": "Delete failed"
+    }
+  }
+  

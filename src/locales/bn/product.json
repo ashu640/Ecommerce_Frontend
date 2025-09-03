@@ -11,7 +11,9 @@
     "highToLow": "বেশি থেকে কম",
     "clearFilter": "ফিল্টার রিসেট করুন",
     "noProductsFound": "কোনও পণ্য পাওয়া যায়নি",
-    "filterButton": "ফিল্টার"
+    "filterButton": "ফিল্টার",
+    "outOfStock": "স্টক শেষ",
+    "author": "লেখক"
     
   }
   

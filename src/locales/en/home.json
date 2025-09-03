@@ -1,5 +1,14 @@
 {
-    "latestProducts": "Latest Products",
-    "noProducts": "No products yet"
-  }
-  
+  "discover": "Discover",
+  "newReads": "New Reads",
+  "exclusiveCollection": "Explore our exclusive collection of Bengali literature and bestsellers.",
+  "shopNow": "Shop Now",
+  "journey": "A Journey",
+  "through": "Through",
+  "stories": "Stories",
+  "curatedBooks": "Curated books for readers of all ages. Start your reading adventure today.",
+  "browseCollection": "Browse Collection",
+  "featuredCollection": "Featured Collection",
+  "seeAll": "See All",
+  "newArrivals": "New Arrivals"
+}

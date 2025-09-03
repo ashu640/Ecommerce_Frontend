@@ -6,6 +6,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -13,6 +14,7 @@ const Orders = () => {
   const navigate = useNavigate();
   const { t } = useTranslation('orders');
 
+  // ✅ fetch orders
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -22,12 +24,34 @@ const Orders = () => {
         setOrders(data.orders);
       } catch (error) {
         console.log(error);
+        toast.error(error?.response?.data?.message || "Failed to load orders");
       } finally {
         setLoading(false);
       }
     };
     fetchOrders();
   }, []);
+
+  // ✅ cancel order function
+  const cancelOrder = async (id) => {
+    try {
+      await axios.post(
+        `${server}/api/order/${id}/cancel`,
+        {},
+        { withCredentials: true }
+      );
+      // update UI after cancel
+      setOrders((prev) =>
+        prev.map((o) =>
+          o._id === id ? { ...o, status: 'canceled' } : o
+        )
+      );
+      toast.success(t('orderCanceled'));
+    } catch (error) {
+      console.error(error);
+      toast.error(error?.response?.data?.message || t('cancelFailed'));
+    }
+  };
 
   if (loading) {
     return <Loading />;
@@ -49,7 +73,10 @@ const Orders = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {orders.map((order) => (
-          <Card key={order._id} className="shadow-sm hover:shadow-lg transition-shadow duration-200">
+          <Card
+            key={order._id}
+            className="shadow-sm hover:shadow-lg transition-shadow duration-200"
+          >
             <CardHeader>
               <CardTitle className="text-xl font-semibold">
                 {t('orderNumber')} #{order._id.toUpperCase()}
@@ -58,7 +85,15 @@ const Orders = () => {
             <CardContent>
               <p>
                 <strong>{t('status')}: </strong>
-                <span className={`${order.status === 'Pending' ? 'text-yellow-500' : 'text-green-500'}`}>
+                <span
+                  className={`${
+                    order.status === 'pending'
+                      ? 'text-yellow-500'
+                      : order.status === 'canceled'
+                      ? 'text-red-500'
+                      : 'text-green-500'
+                  }`}
+                >
                   {t(order.status.toLowerCase())}
                 </span>
               </p>
@@ -74,9 +109,20 @@ const Orders = () => {
                 <strong>{t('placedAt')}: </strong>
                 {new Date(order.createdAt).toLocaleDateString()}
               </p>
-              <Button className="mt-4" onClick={() => navigate(`/order/${order._id}`)}>
-                {t('viewDetails')}
-              </Button>
+              <div className="flex gap-2 mt-4">
+                <Button onClick={() => navigate(`/order/${order._id}`)}>
+                  {t('viewDetails')}
+                </Button>
+                {/* ✅ Cancel button only if pending */}
+                {order.status === 'pending' && (
+                  <Button
+                    variant="destructive"
+                    onClick={() => cancelOrder(order._id)}
+                  >
+                    {t('cancelOrder')}
+                  </Button>
+                )}
+              </div>
             </CardContent>
           </Card>
         ))}
