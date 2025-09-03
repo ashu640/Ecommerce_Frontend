@@ -18,7 +18,7 @@ import OrderPage from './pages/OrderPage.jsx'
 import AdminDashBoard from './pages/AdminDashBoard.jsx'
 import Scrolltop from './components/scrolltop.jsx'
 import Catalogue from './pages/Catalogue.jsx'
-import ContactUs from './pages/Contactus.jsx'
+import ContactUs from './pages/ContactUs.jsx'
 import Publisher from './pages/Publisher.jsx'
 import BlogPage from './pages/Blog.jsx'
 
