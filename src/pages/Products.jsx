@@ -23,7 +23,6 @@ const Products = () => {
   const [typing, setTyping] = useState("");
   const [openSuggest, setOpenSuggest] = useState(false);
 
-  // ✅ For author autocomplete
   const [authorTyping, setAuthorTyping] = useState("");
   const [authorSuggestions, setAuthorSuggestions] = useState([]);
   const [openAuthorSuggest, setOpenAuthorSuggest] = useState(false);
@@ -64,7 +63,7 @@ const Products = () => {
     if (urlPrice !== price) setPrice(urlPrice);
     if (urlAuthor !== author) {
       setAuthor(urlAuthor);
-      setAuthorTyping(urlAuthor); // sync author input box
+      setAuthorTyping(urlAuthor);
     }
     if (urlPage !== page) setPage(urlPage);
 
@@ -121,7 +120,6 @@ const Products = () => {
         const { data } = await axios.get(
           `${server}/api/product/author/autocomplete?q=${authorTyping}&lang=${i18n.language}`
         );
-        console.log(data);
         setAuthorSuggestions(data);
         setOpenAuthorSuggest(true);
       } catch (err) {
@@ -133,6 +131,7 @@ const Products = () => {
     return () => clearTimeout(debounce);
   }, [authorTyping, i18n.language, author]);
 
+  // ✅ Handlers
   const handleSelect = (value) => {
     setSearch(value);
     setTyping(value);
@@ -148,7 +147,6 @@ const Products = () => {
   };
 
   const clearFilter = () => {
-    // Reset all filters in context
     setPrice("");
     setCategory("");
     setSearch("");
@@ -161,7 +159,6 @@ const Products = () => {
     setOpenSuggest(false);
     setOpenAuthorSuggest(false);
 
-    // ✅ Reset URL params
     setSearchParams({});
   };
 
@@ -171,6 +168,18 @@ const Products = () => {
   if (!mounted) {
     return <Loading />;
   }
+
+  // ✅ Safe helper to resolve localized fields
+  const resolveLocalizedField = (field) => {
+    if (!field) return "";
+    if (typeof field === "string") return field;
+    if (typeof field === "object") {
+      return i18n.language === "bn"
+        ? field.bn || field.en || ""
+        : field.en || field.bn || "";
+    }
+    return "";
+  };
 
   return (
     <div className="flex flex-col md:flex-row h-full">
@@ -214,22 +223,19 @@ const Products = () => {
             {openSuggest && suggestions.length > 0 && (
               <ul className="absolute bg-white dark:bg-gray-900 border rounded-md mt-1 w-full max-h-48 overflow-y-auto shadow-lg z-50">
                 {suggestions.map((sug) => {
-                  const title =
-                    i18n.language === "bn" ? sug.title?.bn : sug.title?.en;
-                  const author =
-                    i18n.language === "bn"
-                      ? sug.author?.bn || sug.author
-                      : sug.author?.en || sug.author;
+                  const title = resolveLocalizedField(sug.title);
+                  const author = resolveLocalizedField(sug.author);
+
                   return (
                     <li
                       key={sug._id}
                       onClick={() => handleSelect(title)}
                       className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
                     >
-                      {title}{" "}
-                      {author ? (
-                        <span className="text-sm text-gray-500">— {author}</span>
-                      ) : null}
+                      {title}
+                      {author && (
+                        <span className="text-sm text-gray-500"> — {author}</span>
+                      )}
                     </li>
                   );
                 })}
@@ -260,22 +266,18 @@ const Products = () => {
             />
             {openAuthorSuggest && authorSuggestions.length > 0 && (
               <ul className="absolute bg-white dark:bg-gray-900 border rounded-md mt-1 w-full max-h-48 overflow-y-auto shadow-lg z-50">
-               {authorSuggestions.map((sug, index) => {
-  const name =
-    i18n.language === "bn"
-      ? sug.bn || sug.en
-      : sug.en || sug.bn;
-
-  return (
-    <li
-      key={index}   // 👈 using index here since no _id
-      onClick={() => handleAuthorSelect(name)}
-      className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
-    >
-      {name}
-    </li>
-  );
-})}
+                {authorSuggestions.map((sug, index) => {
+                  const name = resolveLocalizedField(sug);
+                  return (
+                    <li
+                      key={index}
+                      onClick={() => handleAuthorSelect(name)}
+                      className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
+                    >
+                      {name}
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </div>
@@ -335,13 +337,11 @@ const Products = () => {
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {product && product.length > 0 ? (
-              product.map((e) => {
-                return (
-                  <div key={e._id} className="flex justify-center">
-                    <ProductCard product={e} latest="No" />
-                  </div>
-                );
-              })
+              product.map((e) => (
+                <div key={e._id} className="flex justify-center">
+                  <ProductCard product={e} latest="No" />
+                </div>
+              ))
             ) : (
               <p className="text-center col-span-full">{t("noProductsFound")}</p>
             )}
