@@ -1,19 +1,24 @@
 {
-    "title": "Checkout",
-    "no_address": "No address found",
-    "add_new": "Add New Address",
-    "use_address": "Use Address",
-    "add_modal_title": "Add New Address",
-    "address_placeholder": "Address",
-    "phone_placeholder": "Phone",
-    "close_button": "Close",
-    "add_button": "Add Address",
-    "address_label": "Address",
-    "phone_label": "Phone",
-    "confirm_delete": "Are you sure you want to delete",
-    "success_add": "Address added successfully",
-    "error_add": "Failed to add address",
-    "success_delete": "Address deleted successfully",
-    "error_delete": "Failed to delete address"
+  "title": "Checkout",
+  "address": "Address",
+  "phone": "Phone",
+  "altPhone": "Alternate Phone",
+  "name": "Full Name",
+  "addressLine1": "Address Line 1",
+  "addressLine2": "Address Line 2",
+  "landmark": "Landmark",
+  "city": "City",
+  "state": "State",
+  "postalCode": "Postal Code",
+  "country": "Country",
+  "useAddress": "Use this Address",
+  "addNew": "Add New Address",
+  "addBtn": "Save Address",
+  "close": "Close",
+  "noAddress": "No saved addresses found.",
+  "confirmDelete": "Are you sure you want to delete this address?",
+  "errors": {
+    "addFail": "Failed to add address",
+    "deleteFail": "Failed to delete address"
   }
-  
+}

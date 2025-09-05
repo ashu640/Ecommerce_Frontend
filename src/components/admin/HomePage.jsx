@@ -1,5 +1,5 @@
 import { ProductData } from '@/context/productContext';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Loading from '../Loading';
 import ProductCard from '../ProductCard';
 import {
@@ -53,6 +53,9 @@ const HomePage = () => {
   const handleFileChange = (e) => {
     setFormData((prev) => ({ ...prev, images: e.target.files }));
   };
+  useEffect(() => {
+    fetchProducts();
+  }, [page]);
 
   const submitHandler = async (e) => {
     e.preventDefault();

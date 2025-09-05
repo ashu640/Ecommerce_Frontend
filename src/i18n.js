@@ -16,7 +16,7 @@ import enPayment from './locales/en/payment.json';
 import enCatalogue from './locales/en/catalogue.json';
 import enFooter from './locales/en/footer.json';
 
-// Import Bengali (bn) namespaces
+// Import Bengali namespaces
 import bnCommon from './locales/bn/common.json';
 import bnHome from './locales/bn/home.json';
 import bnProduct from './locales/bn/product.json';
@@ -30,12 +30,12 @@ import bnPayment from './locales/bn/payment.json';
 import bnCatalogue from './locales/bn/catalogue.json';
 import bnFooter from './locales/bn/footer.json';
 
-
 i18n
-  .use(LanguageDetector) // detects browser language, cookies, localStorage etc.
-  .use(initReactI18next) // passes i18n instance to react-i18next
+  .use(LanguageDetector) // detect from localStorage, cookie, browser
+  .use(initReactI18next) // pass i18n to react-i18next
   .init({
     debug: true,
+
     resources: {
       en: {
         common: enCommon,
@@ -48,8 +48,8 @@ i18n
         verify: enVerify,
         productpage: enProductPage,
         payment: enPayment,
-        catalogue:enCatalogue,
-        footer:enFooter
+        catalogue: enCatalogue,
+        footer: enFooter,
       },
       bn: {
         common: bnCommon,
@@ -62,19 +62,21 @@ i18n
         verify: bnVerify,
         productpage: bnProductPage,
         payment: bnPayment,
-        catalogue:bnCatalogue,
-        footer:bnFooter,
-
+        catalogue: bnCatalogue,
+        footer: bnFooter,
       },
     },
 
-    // ✅ Always fallback to English
+    // ✅ Always start with English
+    lng: 'en',
+
+    // ✅ If translation not found, fallback to English
     fallbackLng: 'en',
 
-    // ✅ define default namespace
+    // ✅ Default namespace
     defaultNS: 'common',
 
-    // ✅ list of namespaces
+    // ✅ Namespaces list
     ns: [
       'common',
       'home',
@@ -87,22 +89,22 @@ i18n
       'productpage',
       'payment',
       'catalogue',
-      'footer'
+      'footer',
     ],
 
     interpolation: {
-      escapeValue: false, // react already escapes by default
+      escapeValue: false, // React already escapes
     },
 
     detection: {
-      order: ['localStorage', 'cookie', 'navigator'], // check storage first, then browser
-      caches: ['localStorage', 'cookie'],             // save user choice
+      order: ['localStorage', 'cookie', 'navigator'], // check storage first
+      caches: ['localStorage', 'cookie'], // save language choice
       lookupLocalStorage: 'i18nextLng',
       lookupCookie: 'i18next',
     },
 
-    supportedLngs: ['en', 'bn'], // only allow en & bn
-    nonExplicitSupportedLngs: true, // map en-US → en, bn-IN → bn
+    supportedLngs: ['en', 'bn'],
+    nonExplicitSupportedLngs: true, // en-US → en, bn-IN → bn
   });
 
 export default i18n;

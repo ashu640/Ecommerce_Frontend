@@ -69,29 +69,32 @@ const OrderPage = () => {
       {user._id === order.user._id || user.role === "admin" ? (
         <>
           <Card className="mb-6">
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle className="text-2xl font-bold">
-                  {t("orderDetails")}
-                </CardTitle>
-                <div className="flex gap-2">
-                  <Button onClick={() => window.print()}>{t("printOrder")}</Button>
+          <CardHeader>
+  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+    <CardTitle className="text-2xl font-bold">{t("orderDetails")}</CardTitle>
 
-                  {/* ✅ Cancel button shown only if order is not cancelled yet */}
-                  {order.status !== "cancelled" &&
-                    order.status !== "shipped" &&
-                    order.status !== "delivered" && (
-                      <Button
-                        variant="destructive"
-                        onClick={handleCancelOrder}
-                        disabled={cancelling}
-                      >
-                        {cancelling ? t("cancelling") : t("cancelOrder")}
-                      </Button>
-                    )}
-                </div>
-              </div>
-            </CardHeader>
+    {/* ✅ Responsive button group */}
+    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+      <Button onClick={() => window.print()} className="w-full sm:w-auto">
+        {t("printOrder")}
+      </Button>
+
+      {order.status !== "cancelled" &&
+        order.status !== "shipped" &&
+        order.status !== "delivered" && (
+          <Button
+            variant="destructive"
+            onClick={handleCancelOrder}
+            disabled={cancelling}
+            className="w-full sm:w-auto"
+          >
+            {cancelling ? t("cancelling") : t("cancelOrder")}
+          </Button>
+        )}
+    </div>
+  </div>
+</CardHeader>
+
 
             {/* Order summary */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4">

@@ -335,17 +335,17 @@ const Products = () => {
         {loading ? (
           <Loading />
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {product && product.length > 0 ? (
-              product.map((e) => (
-                <div key={e._id} className="flex justify-center">
-                  <ProductCard product={e} latest="No" />
-                </div>
-              ))
-            ) : (
-              <p className="text-center col-span-full">{t("noProductsFound")}</p>
-            )}
-          </div>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {product && product.length > 0 ? (
+            product.map((e) => (
+              <div key={e._id} className="flex justify-center">
+                <ProductCard product={e} latest="No" />
+              </div>
+            ))
+          ) : (
+            <p className="text-center col-span-full">{t("noProductsFound")}</p>
+          )}
+        </div>
         )}
 
         <div className="mt-6 mb-3 flex justify-center">
