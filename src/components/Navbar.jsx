@@ -67,6 +67,9 @@ const Navbar = () => {
   const [searchText, setSearchText] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [openSuggest, setOpenSuggest] = useState(false);
+  // Add state at the top of Navbar
+const [openSheet, setOpenSheet] = useState(false);
+
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -166,55 +169,77 @@ const Navbar = () => {
         </div>
 
         {/* Mobile hamburger */}
-        <Sheet>
-          <SheetTrigger asChild>
-            <button className="md:hidden text-white">
-              <Menu size={24} />
+<Sheet open={openSheet} onOpenChange={setOpenSheet}>
+  <SheetTrigger asChild>
+    <button className="md:hidden text-white">
+      <Menu size={24} />
+    </button>
+  </SheetTrigger>
+  <SheetContent side="left" className="bg-black text-white p-6">
+    <nav className="flex flex-col gap-4">
+      <Link 
+        to="/about" 
+        className="hover:text-yellow-600"
+        onClick={() => setOpenSheet(false)} // ✅ close after click
+      >
+        {t("nav.about")}
+      </Link>
+      <Link 
+        to="/contactus" 
+        className="hover:text-yellow-600"
+        onClick={() => setOpenSheet(false)}
+      >
+        {t("nav.contact")}
+      </Link>
+
+      {!isAuth ? (
+        <button
+          onClick={() => {
+            setOpenLogin(true);
+            setOpenSheet(false); // ✅ close after login click
+          }}
+          className="text-left hover:text-yellow-600"
+        >
+          {t("nav.login")}
+        </button>
+      ) : (
+        <>
+          <button
+            onClick={() => {
+              navigate("/orders");
+              setOpenSheet(false);
+            }}
+            className="hover:text-yellow-600"
+          >
+            {t("nav.orders")}
+          </button>
+          {user?.role === "admin" && (
+            <button
+              onClick={() => {
+                navigate("/admin/dashboard");
+                setOpenSheet(false);
+              }}
+              className="hover:text-yellow-600"
+            >
+              {t("nav.dashboard")}
             </button>
-          </SheetTrigger>
-          <SheetContent side="left" className="bg-black text-white p-6">
-            <nav className="flex flex-col gap-4">
-              <Link to="/about" className="hover:text-yellow-600">
-                {t("nav.about")}
-              </Link>
-              <Link to="/contactus" className="hover:text-yellow-600">
-                {t("nav.contact")}
-              </Link>
-              {!isAuth ? (
-                <button
-                  onClick={() => setOpenLogin(true)}
-                  className="text-left hover:text-yellow-600"
-                >
-                  {t("nav.login")}
-                </button>
-              ) : (
-                <>
-                  <button
-                    onClick={() => navigate("/orders")}
-                    className="hover:text-yellow-600"
-                  >
-                    {t("nav.orders")}
-                  </button>
-                  {user?.role === "admin" && (
-                    <button
-                      onClick={() => navigate("/admin/dashboard")}
-                      className="hover:text-yellow-600"
-                    >
-                      {t("nav.dashboard")}
-                    </button>
-                  )}
-                  <button
-                    onClick={logouthandler}
-                    className="hover:text-yellow-600"
-                  >
-                    {t("nav.logout")}
-                  </button>
-                </>
-              )}
-              <ModeToggle />
-            </nav>
-          </SheetContent>
-        </Sheet>
+          )}
+          <button
+            onClick={() => {
+              logouthandler();
+              setOpenSheet(false);
+            }}
+            className="hover:text-yellow-600"
+          >
+            {t("nav.logout")}
+          </button>
+        </>
+      )}
+      <ModeToggle />
+    </nav>
+  </SheetContent>
+</Sheet>
+
       </div>
 
       <div className="pt-12"></div>

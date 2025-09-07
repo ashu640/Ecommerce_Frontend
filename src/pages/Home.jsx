@@ -126,7 +126,7 @@ const Home = () => {
           </div>
 
           <Swiper
-            slidesPerView={1}
+            slidesPerView={2}
             spaceBetween={15}
             loop={true}
             autoplay={{

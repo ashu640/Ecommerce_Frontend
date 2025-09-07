@@ -4,7 +4,6 @@ import { Separator } from '@/components/ui/separator';
 import { CartData } from '@/context/cartContext';
 import { server } from '@/main';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -18,16 +17,15 @@ const Payment = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
-  const { t, i18n } = useTranslation("payment"); // <-- i18n hook
+  const { t, i18n } = useTranslation("payment");
 
   async function fetchAddress() {
     try {
-      const { data } = await axios.get(`${server}/api/address/${id}`, {
-        withCredentials: true,
-      });
+      const { data } = await axios.get(`${server}/api/address/${id}`, { withCredentials: true });
+      console.log("📦 Address fetched:", data);
       setAddress(data);
     } catch (error) {
-      console.log(error);
+      console.error("❌ Error fetching address:", error.response?.data || error.message);
     }
   }
 
@@ -36,29 +34,28 @@ const Payment = () => {
   }, [id]);
 
   const paymentHandler = async () => {
-    if (!method || !address) return;
+    if (!method || !address) {
+      toast.error("Please select payment method & address");
+      return;
+    }
 
     if (method === 'cod') {
       setLoading(true);
       try {
         const { data } = await axios.post(
           `${server}/api/order/new/cod`,
-          {
-            method,
-            phone: address.phone,
-            address: address.address,
-          },
-          {
-            withCredentials: true,
-          }
+          { method, addressId: address._id },
+          { withCredentials: true }
         );
-        setLoading(false);
+        console.log("✅ COD order response:", data);
         toast.success(data.message);
         fetchCart();
         navigate('/orders');
       } catch (error) {
-        setLoading(false);
+        console.error("❌ COD order error:", error.response?.data || error.message);
         toast.error(error.response?.data?.message || t('codFailed'));
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -67,27 +64,21 @@ const Payment = () => {
       try {
         setLoading(true);
         const stripe = await stripePromise;
-
         const { data } = await axios.post(
           `${server}/api/order/new/online`,
-          {
-            method,
-            phone: address.phone,
-            address: address.address,
-          },
-          {
-            withCredentials: true,
-          }
+          { method, addressId: address._id },
+          { withCredentials: true }
         );
-
+        console.log("✅ Online order response:", data);
         if (data.url) {
           window.location.href = data.url;
         } else {
-          toast.error(t('sessionFailed'));
+          toast.error(data.message || t('sessionFailed'));
         }
-        setLoading(false);
       } catch (error) {
-        toast.error(t('paymentFailed'));
+        console.error("❌ Online payment error:", error.response?.data || error.message);
+        toast.error(error.response?.data?.message || t('paymentFailed'));
+      } finally {
         setLoading(false);
       }
     }
@@ -102,83 +93,64 @@ const Payment = () => {
           <div className="space-y-8">
             <h2 className="text-3xl font-bold text-center">{t('title')}</h2>
 
+            {/* Products */}
             <div>
               <h3 className="text-xl font-semibold">{t('products')}</h3>
               <Separator className="my-2" />
               <div className="space-y-4">
-                {cart &&
-                  cart.map((e, i) => (
-                    <div
-                      key={i}
-                      className="flex flex-col md:flex-row items-center justify-between bg-card p-4 rounded-lg shadow border dark:border-gray-700"
-                    >
-                      <img
-                        src={e.product.images[0]?.url}
-                        alt="xyz"
-                        className="w-16 h-16 object-cover rounded mb-4 md:mb-0"
-                      />
-                      <div className="flex-1 md:ml-4 text-center md:text-left">
-                        {/* ✅ FIX: show title in current language */}
-                        <h2 className="text-lg font-medium">
-                          {e.product.title[i18n.language]}
-                        </h2>
-
-                        <p className="text-sm text-muted-foreground dark:text-gray-400">
-                          ₹ {e.product.price} x {e.quantity}
-                        </p>
-                        <p className="text-sm text-muted-foreground dark:text-gray-400">
-                          ₹ {e.product.price * e.quantity}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                {cart && cart.map((e, i) => (
+                  <div key={i} className="flex flex-col md:flex-row items-center justify-between bg-card p-4 rounded-lg shadow border">
+                    <img src={e.product.images[0]?.url} alt={e.product.title[i18n.language]} className="w-16 h-16 rounded-md object-cover" />
+                    <p className="font-semibold">{e.product.title[i18n.language]}</p>
+                    <p>{e.quantity} x ₹{e.product.price} = ₹{e.quantity * e.product.price}</p>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <div className="text-lg font-medium text-center">
-              {t('total')}: ₹{subTotal}
+            {/* Address */}
+            <div>
+              <h3 className="text-xl font-semibold">{t('delivery_address')}</h3>
+              <Separator className="my-2" />
+              {address && (
+                <div className="bg-card p-4 rounded-lg shadow border">
+                  <p><strong>{t('address')}:</strong> {address.address}, {address.city}, {address.country}, {address.pinCode}</p>
+                  <p><strong>{t('phone')}:</strong> {address.phone}</p>
+                </div>
+              )}
             </div>
 
-            {address && (
-              <div className="bg-card p-4 rounded-lg shadow border space-y-4 dark:border-gray-700">
-                <h3 className="text-lg font-semibold text-center">{t('details')}</h3>
-                <Separator className="my-2" />
-                <div className="flex flex-col space-y-0">
-                  <h4 className="font-semibold mb-1">{t('deliveryAddress')}</h4>
-                  <p className="text-sm text-muted-foreground dark:text-gray-400">
-                    <strong>{t('address')}:</strong> {address.address}
-                  </p>
-                  <p className="text-sm text-muted-foreground dark:text-gray-400">
-                    <strong>{t('phone')}:</strong> {address.phone}
-                  </p>
-                </div>
+            {/* Payment Method Dropdown */}
+            <div>
+              <h3 className="text-xl font-semibold">{t('payment_method')}</h3>
+              <Separator className="my-2" />
+              <select
+                value={method}
+                onChange={(e) => setMethod(e.target.value)}
+                className="w-full p-2 border rounded-md"
+              >
+                <option value="">{t('select_method')}</option>
+                <option value="cod">{t('cod')}</option>
+                <option value="online">{t('online')}</option>
+              </select>
+            </div>
 
-                <div className="w-full md:w-1/2">
-                  <h4 className="font-semibold mb-1">{t('selectMethod')}</h4>
-                  <select
-                    value={method}
-                    onChange={(e) => setMethod(e.target.value)}
-                    className="w-full p-2 border rounded-lg bg-card dark:bg-gray-900 dark:text-white"
-                  >
-                    <option value="">{t('selectOption')}</option>
-                    <option value="cod">{t('cod')}</option>
-                    <option value="online">{t('online')}</option>
-                  </select>
-                </div>
-              </div>
-            )}
-
-            <Button
-              className="w-full py-3 mt-4"
-              onClick={paymentHandler}
-              disabled={!method || !address}
-            >
-              {method === 'cod'
-                ? t('placeOrder')
-                : method === 'online'
-                ? t('proceedOnline')
-                : t('selectBtn')}
-            </Button>
+            {/* Pay Now / Order Now Button */}
+            <div>
+              <h3 className="text-xl font-semibold">{t('total')} ₹{subTotal}</h3>
+              <Separator className="my-2" />
+              <Button
+                onClick={paymentHandler}
+                disabled={!method || !address}
+                className="w-full"
+              >
+                {method === 'cod'
+                  ? t('order_now')
+                  : method === 'online'
+                  ? t('pay_now')
+                  : t('select_method_first')}
+              </Button>
+            </div>
           </div>
         </div>
       )}

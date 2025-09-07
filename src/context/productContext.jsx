@@ -78,7 +78,7 @@ export const ProductProvider = ({ children }) => {
 
   // ✅ helpers to update filters (keeps URL in sync)
   const updateFilter = (key, value) => {
-    if (location.pathname !== "/products") return;
+    // if (location.pathname !== "/products") return;
     const params = new URLSearchParams(searchParams);
 
     if (value) {

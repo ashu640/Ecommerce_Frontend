@@ -24,7 +24,7 @@ const Checkout = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   const [newAddress, setNewAddress] = useState({
-    name: "",
+    fullName: "",
     phone: "",
     alternatePhone: "",
     addressLine1: "",
@@ -59,7 +59,7 @@ const Checkout = () => {
         toast.success(data.message);
         fetchAddress();
         setNewAddress({
-          name: "",
+          fullName: "",
           phone: "",
           alternatePhone: "",
           addressLine1: "",
@@ -111,7 +111,7 @@ const Checkout = () => {
               address.map((e) => (
                 <div className="p-4 border rounded-lg shadow-sm" key={e._id}>
                   <div className="flex justify-between items-start">
-                    <h3 className="text-lg font-semibold">{e.name}</h3>
+                    <h3 className="text-lg font-semibold">{e.fullName}</h3>
                     <Button
                       variant="destructive"
                       size="icon"
@@ -157,8 +157,8 @@ const Checkout = () => {
               <div className="space-y-3 max-h-[70vh] overflow-y-auto pr-2">
                 <Input
                   placeholder={t("name")}
-                  value={newAddress.name}
-                  onChange={(e) => setNewAddress({ ...newAddress, name: e.target.value })}
+                  value={newAddress.fullName}
+                  onChange={(e) => setNewAddress({ ...newAddress,  fullName: e.target.value })}
                 />
                 <Input
                   type="text"
