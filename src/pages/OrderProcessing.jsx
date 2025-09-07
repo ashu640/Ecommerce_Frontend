@@ -37,10 +37,11 @@ const OrderProcessing = () => {
           setSuccess(true);
           fetchCart();
           toast.success(t("success_toast"));
-        } else {
-          toast.error(data.reason || t("failed_toast"));
-          navigate('/cart');
-        }
+        } 
+          else {
+            // Retry after 1.5 seconds if order not yet created
+            setTimeout(checkOrderStatus, 1500);
+          }
       } catch (err) {
         console.error("❌ Error checking order status:", err.response?.data || err.message);
         toast.error(err.response?.data?.message || t("failed_toast"));
