@@ -41,13 +41,13 @@ const ProductCard = ({ product, latest }) => {
 
   return (
     <div
-    key={product._id}
-    className="group bg-white dark:bg-gray-900 shadow-md dark:shadow-gray-800 
-               rounded-2xl p-3 flex flex-col 
-               hover:shadow-xl dark:hover:shadow-2xl
-               transition duration-300
-               min-h-[300px] sm:min-h-[300px] md:min-h-[300px] lg:w-full"
-  >
+      key={product._id}
+      className="group bg-white dark:bg-gray-900 shadow-md dark:shadow-gray-800 
+                 rounded-2xl p-3 flex flex-col justify-between
+                 hover:shadow-xl dark:hover:shadow-2xl
+                 transition duration-300
+                 h-[400px] sm:h-[420px] w-full"
+    >
       {/* ✅ Category Badge */}
       <div className="mb-2">
         {latest === "yes" ? (
@@ -62,19 +62,19 @@ const ProductCard = ({ product, latest }) => {
       </div>
 
       {/* ✅ Image + Discount */}
-      <div className="w-full flex flex-col">
+      <div className="flex flex-col flex-1">
         <div
-          className="w-full flex justify-center items-center h-40 sm:h-48 overflow-hidden rounded-lg cursor-pointer"
+          className="w-full flex justify-center items-center h-40 sm:h-44 overflow-hidden rounded-lg cursor-pointer"
           onClick={() => navigate(`/product/${product._id}`)}
         >
           <img
             src={product.images?.[0]?.url || "/placeholder.png"}
             alt={product.title || "Product"}
-            className="object-contain max-h-full group-hover:scale-105 transition-transform duration-300"
+            className="object-contain h-full w-auto group-hover:scale-105 transition-transform duration-300"
           />
         </div>
 
-        {/* ✅ Reserve space for badge (even if none) */}
+        {/* ✅ Reserve space for badge */}
         <div className="w-full flex justify-end mt-2 min-h-[28px] sm:min-h-[32px]">
           {discount > 0 && (
             <Badge
@@ -89,16 +89,16 @@ const ProductCard = ({ product, latest }) => {
       </div>
 
       {/* ✅ Title & Author */}
-      <div className="flex-1 mt-3">
+      <div className="mt-3 flex-1">
         <h4
           onClick={() => navigate(`/product/${product._id}`)}
           className="text-sm sm:text-base font-medium text-gray-800 dark:text-gray-200 
-                     hover:underline line-clamp-2"
+                     hover:underline line-clamp-2 h-[40px]"
         >
           {product.title}
         </h4>
         {product.author && (
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 line-clamp-1">
+          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 line-clamp-1 h-[18px]">
             By <span className="font-medium">{product.author}</span>
           </p>
         )}
@@ -107,15 +107,10 @@ const ProductCard = ({ product, latest }) => {
       {/* ✅ Price + Cart (sticky bottom row) */}
       <div className="flex mt-3 items-center justify-between">
         {product.oldPrice ? (
-         <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 items-start sm:items-center text-sm sm:text-base">
-         <span className="text-gray-400 line-through">
-           ₹{product.oldPrice}
-         </span>
-         <span className="text-red-600 font-bold">
-           ₹{product.price}
-         </span>
-       </div>
-       
+          <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 items-start sm:items-center text-sm sm:text-base">
+            <span className="text-gray-400 line-through">₹{product.oldPrice}</span>
+            <span className="text-red-600 font-bold">₹{product.price}</span>
+          </div>
         ) : (
           <span className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100">
             ₹{product.price}
