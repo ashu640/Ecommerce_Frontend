@@ -125,14 +125,14 @@ const Payment = () => {
               <h3 className="text-xl font-semibold">{t('payment_method')}</h3>
               <Separator className="my-2" />
               <select
-                value={method}
-                onChange={(e) => setMethod(e.target.value)}
-                className="w-full p-2 border rounded-md"
-              >
-                <option value="">{t('select_method')}</option>
-                <option value="cod">{t('cod')}</option>
-                <option value="online">{t('online')}</option>
-              </select>
+  value={method}
+  onChange={(e) => setMethod(e.target.value)}
+  className="w-full p-2 border rounded-md bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 border-gray-300 dark:border-gray-600"
+>
+  <option value="">{t('select_method')}</option>
+  <option value="cod">{t('cod')}</option>
+  <option value="online">{t('online')}</option>
+</select>
             </div>
 
             {/* Pay Now / Order Now Button */}

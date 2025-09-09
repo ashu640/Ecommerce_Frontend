@@ -1,87 +1,87 @@
-import { Button } from '@/components/ui/button';
-import { CartData } from '@/context/cartContext';
-import { server } from '@/main';
-import React, { useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { server } from "@/main";
+import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
+import { CartData } from "@/context/cartContext";
+import { Loader } from "lucide-react";
 
 const OrderProcessing = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [paymentVerified, setPaymentVerified] = useState(false);
   const { fetchCart } = CartData();
-  const { t } = useTranslation('orders');
+  const { t } = useTranslation("orders");
 
   const queryParams = new URLSearchParams(location.search);
-  const sessionId = queryParams.get('session_id');
-  console.log("🔎 sessionId from URL:", sessionId);
+  const sessionId = queryParams.get("session_id");
 
   useEffect(() => {
-    const checkOrderStatus = async () => {
+    const verifyPayment = async () => {
       if (!sessionId) {
-        toast.error(t("session_missing"));
-        return navigate('/cart');
+        toast.error(t("missingSession"));
+        return navigate("/cart");
       }
 
+      if (paymentVerified) {
+        return;
+      }
+
+      setLoading(true);
+
       try {
-        const { data } = await axios.get(
-          `${server}/api/order/status/${sessionId}`,
+        const { data } = await axios.post(
+          `${server}/api/order/verify/payment`,
+          { sessionId },
           { withCredentials: true }
         );
-        console.log("🔍 Order status response:", data);
 
         if (data.success) {
-          setSuccess(true);
+          toast.success(t("orderSuccessToast"));
+          setPaymentVerified(true);
           fetchCart();
-          toast.success(t("success_toast"));
-        } 
-          else {
-            // Retry after 1.5 seconds if order not yet created
-            setTimeout(checkOrderStatus, 1500);
-          }
-      } catch (err) {
-        console.error("❌ Error checking order status:", err.response?.data || err.message);
-        toast.error(err.response?.data?.message || t("failed_toast"));
-        navigate('/cart');
-      } finally {
-        setLoading(false);
+          setLoading(false);
+          setTimeout(() => {
+            navigate("/orders");
+          }, 10000);
+        }
+      } catch (error) {
+        toast.error(t("paymentFailedToast"));
+        navigate("/cart");
+        console.log(error);
       }
     };
 
-    checkOrderStatus();
-  }, [sessionId]);
+    if (sessionId && !paymentVerified) {
+      verifyPayment();
+    }
+  }, [sessionId, paymentVerified, navigate, t]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-100 to-blue-500">
-        <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg text-center">
-          <h1 className="text-4xl font-extrabold text-blue-600 mb-4">{t("processing_title")}</h1>
-          <p className="text-lg text-gray-700 mb-6">{t("processing_message")}</p>
-          <div className="animate-pulse text-2xl text-gray-600">⏳</div>
-          <div className="text-xl text-gray-500 mt-2">{t("processing_subtext")}</div>
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-100 to-blue-500">
+      {loading ? (
+        <div className="bg-white p-8 rounded-lg shadow-lg text-clip max-w-lg text-center">
+          <h1 className="text-4xl font-extrabold text-blue-600 mb-4">
+            {t("processingTitle")}
+          </h1>
+          <p className="text-lg text-gray-700 mb-6">{t("processingMessage")}</p>
+          <Loader className="mx-auto animate-spin text-blue-600 w-8 h-8" />
+          <div className="text-xl text-gray-500 mt-2">{t("processingStatus")}</div>
         </div>
-      </div>
-    );
-  }
-
-  return success ? (
-    <div className="min-h-screen flex items-center justify-center bg-green-50">
-      <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-6 text-center">
-        <h1 className="text-4xl font-bold text-green-500 mb-4">{t("success_title")}</h1>
-        <p className="text-gray-600 text-lg mb-6">{t("success_message")}</p>
-        <Button onClick={() => navigate('/orders')}>{t("go_to_orders")}</Button>
-      </div>
-    </div>
-  ) : (
-    <div className="min-h-screen flex items-center justify-center bg-red-50">
-      <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-6 text-center">
-        <h1 className="text-4xl font-bold text-red-500 mb-4">{t("failed_title")}</h1>
-        <p className="text-gray-600 text-lg mb-6">{t("failed_message")}</p>
-        <Button onClick={() => navigate('/cart')}>{t("try_again")}</Button>
-      </div>
+      ) : (
+        <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-6 text-center">
+          <h1 className="text-4xl font-bold text-green-500 mb-4">
+            {t("successTitle")}
+          </h1>
+          <p className="text-gray-600 text-lg mb-6">{t("successMessage")}</p>
+          <Button onClick={() => navigate("/orders")}>
+            {t("goToOrders")}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

@@ -7,6 +7,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import toast from "react-hot-toast";
 
 const OrderPage = () => {
   const { t, i18n } = useTranslation("orders");
@@ -36,22 +37,25 @@ const OrderPage = () => {
   }, [id]);
 
   const handleCancelOrder = async () => {
-    if (!window.confirm(t("confirmCancel"))) return;
-
+  
     try {
       setCancelling(true);
       const { data } = await axios.post(
         `${server}/api/order/${id}/cancel`,
-        { withCredentials: true }
+        {}, // empty body
+        { withCredentials: true } // config
       );
-      setOrder(data.order); // update order state with cancelled order
+  
+      // update order state with cancelled order from backend
+      setOrder(data.order);
+      toast.success(data.message)
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.message || "Failed to cancel order");
     } finally {
       setCancelling(false);
     }
   };
+  
 
   if (loading) return <Loading />;
 

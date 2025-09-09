@@ -4,20 +4,24 @@ import OrdersPage from '@/components/admin/OrdersPage';
 import { Button } from '@/components/ui/button';
 import { UserData } from '@/context/UserContext';
 import { Home, Info, MenuIcon, ShoppingBag, X } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import AdminLayout from '@/components/admin/AdminLayout';
 
 const AdminDashBoard = () => {
   const [selectedPage, setSelectedPage] = useState("home");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const navigate = useNavigate();
   const { user } = UserData();
-  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { t } = useTranslation('admin');
 
-  if (user.role !== "admin") {
-    return navigate("/");
-  }
+  // ✅ Navigate safely using useEffect
+  useEffect(() => {
+    if (!user || user.role !== "admin") {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   const renderPageContent = () => {
     switch (selectedPage) {
@@ -35,42 +39,48 @@ const AdminDashBoard = () => {
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
-      <div className={`w-64 fixed lg:relative lg:translate-x-0 z-50 transition-transform duration-300 bg-background/50 backdrop-blur shadow-lg h-full 
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <div
+        className={`w-64 fixed lg:relative lg:translate-x-0 z-50 transition-transform duration-300 bg-background/50 backdrop-blur shadow-lg h-full 
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+      >
         <div className="flex flex-col h-full p-4">
           <h1 className="text-lg font-bold mb-4">{t("adminPanel")}</h1>
           <div className="space-y-4">
+            {/* ✅ Use icon + span, no nested buttons */}
             <Button
               variant="ghost"
               onClick={() => setSelectedPage("home")}
               className={`w-full flex items-center gap-2 ${selectedPage === "home" ? "bg-gray-500 text-white" : ""}`}
             >
               <Home className="w-5 h-5" />
-              {t("home")}
+              <span>{t("home")}</span>
             </Button>
+
             <Button
               variant="ghost"
               onClick={() => setSelectedPage("orders")}
               className={`w-full flex items-center gap-2 ${selectedPage === "orders" ? "bg-gray-500 text-white" : ""}`}
             >
               <ShoppingBag className="w-5 h-5" />
-              {t("orders")}
+              <span>{t("orders")}</span>
             </Button>
+
             <Button
               variant="ghost"
               onClick={() => setSelectedPage("info")}
               className={`w-full flex items-center gap-2 ${selectedPage === "info" ? "bg-gray-500 text-white" : ""}`}
             >
               <Info className="w-5 h-5" />
-              {t("info")}
+              <span>{t("info")}</span>
             </Button>
+
             <Button
               variant="ghost"
               className="lg:hidden"
               onClick={() => setSidebarOpen(false)}
             >
               <X className="w-5 h-5" />
-              {t("close")}
+              <span>{t("close")}</span>
             </Button>
           </div>
         </div>

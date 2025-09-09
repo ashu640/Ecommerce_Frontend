@@ -2,7 +2,7 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
-// Import English namespaces
+// ================== English namespaces ==================
 import enCommon from './locales/en/common.json';
 import enHome from './locales/en/home.json';
 import enProduct from './locales/en/product.json';
@@ -15,8 +15,10 @@ import enProductPage from './locales/en/productpage.json';
 import enPayment from './locales/en/payment.json';
 import enCatalogue from './locales/en/catalogue.json';
 import enFooter from './locales/en/footer.json';
+import enAdmin from './locales/en/admin.json';
 
-// Import Bengali namespaces
+
+// ================== Bengali namespaces ==================
 import bnCommon from './locales/bn/common.json';
 import bnHome from './locales/bn/home.json';
 import bnProduct from './locales/bn/product.json';
@@ -29,13 +31,16 @@ import bnProductPage from './locales/bn/productpage.json';
 import bnPayment from './locales/bn/payment.json';
 import bnCatalogue from './locales/bn/catalogue.json';
 import bnFooter from './locales/bn/footer.json';
+import bnAdmin from './locales/bn/admin.json';
+
 
 i18n
-  .use(LanguageDetector) // detect from localStorage, cookie, browser
-  .use(initReactI18next) // pass i18n to react-i18next
+  .use(LanguageDetector) // detects language from localStorage, cookie, navigator
+  .use(initReactI18next) // passes i18n to react-i18next
   .init({
-    debug: true,
+    debug: false, // set true for development
 
+    // ================== Translations ==================
     resources: {
       en: {
         common: enCommon,
@@ -50,6 +55,7 @@ i18n
         payment: enPayment,
         catalogue: enCatalogue,
         footer: enFooter,
+        admin:enAdmin
       },
       bn: {
         common: bnCommon,
@@ -64,19 +70,13 @@ i18n
         payment: bnPayment,
         catalogue: bnCatalogue,
         footer: bnFooter,
+        admin:bnAdmin
       },
     },
 
-    // ✅ Always start with English
-    lng: 'en',
-
-    // ✅ If translation not found, fallback to English
-    fallbackLng: 'en',
-
-    // ✅ Default namespace
+    // ================== Defaults ==================
+    fallbackLng: 'en', // fallback if no language detected
     defaultNS: 'common',
-
-    // ✅ Namespaces list
     ns: [
       'common',
       'home',
@@ -90,21 +90,24 @@ i18n
       'payment',
       'catalogue',
       'footer',
+      'admin'
     ],
 
     interpolation: {
       escapeValue: false, // React already escapes
     },
 
+    // ================== Language detection ==================
     detection: {
-      order: ['localStorage', 'cookie', 'navigator'], // check storage first
-      caches: ['localStorage', 'cookie'], // save language choice
+      order: ['localStorage', 'cookie', 'navigator'], // detection priority
+      caches: ['localStorage', 'cookie'],             // save selection
       lookupLocalStorage: 'i18nextLng',
       lookupCookie: 'i18next',
+      checkWhitelist: true,
     },
 
     supportedLngs: ['en', 'bn'],
-    nonExplicitSupportedLngs: true, // en-US → en, bn-IN → bn
+    nonExplicitSupportedLngs: true, // treats en-US → en, bn-IN → bn
   });
 
 export default i18n;

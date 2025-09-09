@@ -1,6 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home.jsx'
-import Login from './pages/Login.jsx'
 import Navbar from './components/Navbar.jsx'
 import Footer from './components/Footer.jsx'
 import { UserData } from './context/UserContext.jsx'
@@ -39,13 +38,13 @@ const App = () => {
         <Route path='/publisher' element={<Publisher></Publisher>} />
         <Route path='/product/:id' element={<ProductPage />} />
         <Route path='/catalogue' element={<Catalogue/>} />
-        <Route path='/cart' element={isAuth ? <Cart /> : <Login />} />
-        <Route path='/orders' element={isAuth ? <Orders /> : <Login />} />
-        <Route path='/order/:id' element={isAuth ? <OrderPage /> : <Login />} />
-        <Route path='/admin/dashboard' element={isAuth ? <AdminDashBoard /> : <Login />} />
-        <Route path='/checkout' element={isAuth ? <Checkout /> : <Login />} />
-        <Route path='/payment/:id' element={isAuth ? <Payment /> : <Login />} />
-        <Route path='/ordersuccess' element={isAuth ? <OrderProcessing /> : <Login />} />
+        <Route path='/cart' element={isAuth ? <Cart /> : <Home />} />
+        <Route path='/orders' element={isAuth ? <Orders /> : <Home />} />
+        <Route path='/order/:id' element={isAuth ? <OrderPage /> : <Home />} />
+        <Route path='/admin/dashboard' element={isAuth ? <AdminDashBoard /> : <Home />} />
+        <Route path='/checkout' element={isAuth ? <Checkout /> : <Home />} />
+        <Route path='/payment/:id' element={isAuth ? <Payment /> : <Home />} />
+        <Route path='/ordersuccess' element={isAuth ? <OrderProcessing /> : <Home />} />
       
   
         <Route path='*' element={<NotFound />} />

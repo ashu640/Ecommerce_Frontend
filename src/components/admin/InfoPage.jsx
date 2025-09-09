@@ -31,13 +31,14 @@ const InfoPage = () => {
   async function fetchStats() {
     try {
       const { data } = await axios.get(`${server}/api/stats`, {
-       
-          withCredentials: true,
+     withCredentials:true
+
       });
 
       setCod(data.cod);
       setOnline(data.online);
       setData(data.data);
+      console.log(data)
     } catch (error) {
       console.log(error);
     }
@@ -213,14 +214,9 @@ const InfoPage = () => {
                   const { name, sold } = payload[0].payload;
                   return (
                     <div
-                      style={{
-                        backgroundColor: "white",
-                        padding: "10px",
-                        border: "1px solid #ddd",
-                        fontSize: "12px",
-                      }}
-                    >
-                      <strong>{name}</strong>
+                    className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-2 rounded shadow border border-gray-300 dark:border-gray-700 text-xs"
+                  >
+                      <strong>{name.en}</strong>
                       <br />
                       <span>Sold: {sold}</span>
                     </div>

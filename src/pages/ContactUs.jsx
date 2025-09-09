@@ -51,7 +51,7 @@ const ContactUs = () => {
                   href="mailto:email@gmail.com"
                   className="text-blue-600 hover:underline"
                 >
-                  quazihasin@gmail.com
+                  demogmail@gmail.com
                 </a>
               </div>
             </div>
@@ -62,12 +62,12 @@ const ContactUs = () => {
               <div>
                 <h2 className="font-semibold text-lg text-gray-800">Website</h2>
                 <a
-                  href="http://www.biswabangiya.com"
+                  href="http://www.demo.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:underline"
                 >
-                  www.biswabangiya.com
+                  www.demo.com
                 </a>
               </div>
             </div>

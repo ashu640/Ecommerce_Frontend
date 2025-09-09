@@ -304,70 +304,72 @@ const [openSheet, setOpenSheet] = useState(false);
             </div>
           </div>
 
-          {/* Desktop */}
-          <div className="hidden md:grid grid-cols-3 gap-2 items-center py-4">
-            <Link
-              to="/"
-              className="text-3xl font-bold text-black dark:text-white"
+       {/* Desktop */}
+<div className="hidden md:flex items-center justify-between py-4 px-4 lg:px-0 max-w-7xl mx-auto w-full gap-4">
+  {/* Logo */}
+  <Link
+    to="/"
+    className="text-3xl font-bold text-black dark:text-white whitespace-nowrap"
+  >
+    Biswa<span className="text-green-500">Bangiya</span><span className="text-yellow-500">Prakashan</span>
+  </Link>
+
+  {/* Search */}
+  <div className="flex-1 relative max-w-lg w-full">
+    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+    <Input
+      type="text"
+      placeholder={t("search.placeholder")}
+      className="pl-10 pr-20 py-2 rounded-xl border w-full"
+      value={searchText}
+      onChange={(e) => setSearchText(e.target.value)}
+      onBlur={() => setTimeout(() => setOpenSuggest(false), 150)}
+    />
+    {openSuggest && suggestions.length > 0 && (
+      <ul className="absolute top-full left-0 bg-white dark:bg-gray-900 border rounded-md w-full max-h-60 overflow-y-auto shadow-lg z-50 mt-1">
+        {suggestions.map((sug) => {
+          const title =
+            i18n.language === "bn" ? sug.title?.bn : sug.title?.en;
+          const author =
+            i18n.language === "bn" ? sug.author?.bn : sug.author?.en;
+          return (
+            <li
+              key={sug._id}
+              onClick={() => handleSelect(sug._id)}
+              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
             >
-              Biswa<span className="text-green-500">Bangiya</span><span className="text-yellow-500">Prakashan</span>
-            </Link>
-            <div className="flex justify-center relative w-full max-w-lg">
-              <Search className="absolute left-2 top-2 text-gray-400 w-5 h-5" />
-              <Input
-                type="text"
-                placeholder={t("search.placeholder")}
-                className="pl-10 pr-20 py-2 rounded-xl border w-full"
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                onBlur={() => setTimeout(() => setOpenSuggest(false), 150)}
-              />
-              {openSuggest && suggestions.length > 0 && (
-                <ul className="absolute top-12 left-0 bg-white dark:bg-gray-900 border rounded-md w-full max-h-60 overflow-y-auto shadow-lg z-50">
-                  {suggestions.map((sug) => {
-                    const title =
-                      i18n.language === "bn" ? sug.title?.bn : sug.title?.en;
-                    const author =
-                      i18n.language === "bn"
-                        ? sug.author?.bn
-                        : sug.author?.en;
-                    return (
-                      <li
-                        key={sug._id}
-                        onClick={() => handleSelect(sug._id)}
-                        className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
-                      >
-                        {title}{" "}
-                        {author && (
-                          <span className="text-sm text-gray-500">— {author}</span>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
+              {title}{" "}
+              {author && (
+                <span className="text-sm text-gray-500">— {author}</span>
               )}
-            </div>
-            <div className="flex justify-end items-center gap-4">
-              <div className="flex items-center gap-2">
-                <Phone className="w-6 h-6 text-gray-500" />
-                <div className="text-sm">
-                  <span className="text-gray-500">{t("help.text")}</span>
-                  <span className="block text-yellow-600 font-bold">
-                    +08 9229 8228
-                  </span>
-                </div>
-              </div>
-              <Link to="/cart" className="flex items-center gap-2 relative">
-                <ShoppingCart className="w-6 h-6 text-gray-500" />
-                <span className="text-yellow-600 font-bold">
-                  {t("nav.cart")}
-                </span>
-                <span className="absolute -top-3 right-6 z-10 bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">
-                  {totalItem ?? 0}
-                </span>
-              </Link>
-            </div>
-          </div>
+            </li>
+          );
+        })}
+      </ul>
+    )}
+  </div>
+
+  {/* Right icons */}
+  <div className="flex items-center gap-4">
+    <div className="flex items-center gap-2">
+      <Phone className="w-6 h-6 text-gray-500" />
+      <div className="text-sm">
+        <span className="text-gray-500">{t("help.text")}</span>
+        <span className="block text-yellow-600 font-bold">
+          +08 9229 8228
+        </span>
+      </div>
+    </div>
+    <Link to="/cart" className="flex items-center gap-2 relative">
+      <ShoppingCart className="w-6 h-6 text-gray-500" />
+      <span className="text-yellow-600 font-bold">{t("nav.cart")}</span>
+      <span className="absolute -top-3 right-6 z-10 bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">
+        {totalItem ?? 0}
+      </span>
+    </Link>
+  </div>
+</div>
+
         </div>
       </div>
 

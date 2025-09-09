@@ -13,8 +13,10 @@ const Orders = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { t } = useTranslation('orders');
+  const [cancelling, setCancelling] = useState(false);
 
-  // ✅ fetch orders
+
+  // Fetch orders
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -32,30 +34,34 @@ const Orders = () => {
     fetchOrders();
   }, []);
 
-  // ✅ cancel order function
+  // Cancel order
   const cancelOrder = async (id) => {
+    setCancelling(true);
     try {
-      await axios.post(
+      const { data } = await axios.post(
         `${server}/api/order/${id}/cancel`,
         {},
         { withCredentials: true }
       );
-      // update UI after cancel
+
+      // Update the order in state using backend response
       setOrders((prev) =>
         prev.map((o) =>
-          o._id === id ? { ...o, status: 'canceled' } : o
+          o._id === id ? { ...o, ...data.order } : o
         )
       );
-      toast.success(t('orderCanceled'));
+
+      toast.success(data.message || t('orderCanceled'));
     } catch (error) {
       console.error(error);
       toast.error(error?.response?.data?.message || t('cancelFailed'));
     }
+    finally {
+      setCancelling(false); // stop loading
+    }
   };
 
-  if (loading) {
-    return <Loading />;
-  }
+  if (loading) return <Loading />;
 
   if (orders.length === 0) {
     return (
@@ -89,8 +95,10 @@ const Orders = () => {
                   className={`${
                     order.status === 'pending'
                       ? 'text-yellow-500'
-                      : order.status === 'canceled'
+                      : order.status === 'cancelled'
                       ? 'text-red-500'
+                      : order.status === 'shipped'
+                      ? 'text-blue-500'
                       : 'text-green-500'
                   }`}
                 >
@@ -99,7 +107,7 @@ const Orders = () => {
               </p>
               <p>
                 <strong>{t('totalItems')}: </strong>
-                {order.items.length}
+                {order.items?.length || 0}
               </p>
               <p>
                 <strong>{t('subTotal')}: ₹</strong>
@@ -113,14 +121,23 @@ const Orders = () => {
                 <Button onClick={() => navigate(`/order/${order._id}`)}>
                   {t('viewDetails')}
                 </Button>
-                {/* ✅ Cancel button only if pending */}
+                {/* Cancel button only if pending */}
                 {order.status === 'pending' && (
-                  <Button
-                    variant="destructive"
-                    onClick={() => cancelOrder(order._id)}
-                  >
-                    {t('cancelOrder')}
-                  </Button>
+                 
+                 <Button
+  variant="destructive"
+  onClick={() => cancelOrder(order._id)}
+  disabled={cancelling} // disable while request is pending
+  className={`
+    transition 
+    duration-200 
+    ease-in-out 
+    ${cancelling ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-700 active:bg-red-800'}
+  `}
+>
+  {cancelling ? t('cancelling') : t('cancelOrder')}
+</Button>
+
                 )}
               </div>
             </CardContent>

@@ -27,21 +27,21 @@
   "noOrder": "No Order With this id",
   "summary": "Summary",
 
-  "session_missing": "Session Id missing",
-  "success_toast": "Order Placed Successfully",
-  "failed_toast": "Payment verification failed. Please try again",
-  "processing_title": "Processing Order",
-  "processing_message": "Please wait. Your payment is loading...",
-  "processing_subtext": "Processing...",
-  "success_title": "Order Placed",
-  "success_message": "Thank you for shopping with us. Your order will be delivered soon.",
-  "go_to_orders": "Go to Orders Page",
-
-  "noOrders": "You don’t have any orders yet!",
-  "yourOrders": "Your Orders",
-  "orderNumber": "Order Number",
-  "viewDetails": "View Details",
+  
+    "missingSession": "Session ID missing",
+    "orderSuccessToast": "Order placed successfully!",
+    "paymentFailedToast": "Payment verification failed. Please try again.",
+    "processingTitle": "Processing Order",
+    "processingMessage": "Please wait while we process your payment and order",
+    "processingStatus": "Processing...",
+    "successTitle": "Order Placed",
+    "successMessage": "Thank you for shopping with us. Your order will be delivered soon.",
+    "goToOrders": "Go to order page",
+    "orderNumber": "Order Number",
+    "viewDetails": "View Details",
   "cancelOrder": "Cancel Order",
-  "orderCanceled": "Order has been canceled",
-  "cancelFailed": "Failed to cancel order"
+  "cancelling": "Cancelling..."
+
+  
+  
 }

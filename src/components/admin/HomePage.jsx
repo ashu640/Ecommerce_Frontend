@@ -44,14 +44,14 @@ const HomePage = () => {
     images: null,
   });
 
-  // ✅ On mount: set page from URL
+  // On mount: set page from URL
   useEffect(() => {
     const urlPage = parseInt(searchParams.get('page') || '1');
     if (urlPage !== page) setPage(urlPage);
     setMounted(true);
   }, []);
 
-  // ✅ Sync page → URL
+  // Sync page → URL
   useEffect(() => {
     if (!mounted) return;
     setSearchParams({ page });
@@ -134,14 +134,17 @@ const HomePage = () => {
       {/* Header + Add Product */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">All Products</h2>
+
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger>
+          <DialogTrigger asChild>
             <Button className="mb-4">Add Product</Button>
           </DialogTrigger>
-          <DialogContent>
+
+          <DialogContent className="sm:max-w-lg w-full max-h-[90vh] overflow-auto p-6">
             <DialogHeader>
               <DialogTitle>Add Products</DialogTitle>
             </DialogHeader>
+
             <form onSubmit={submitHandler} className="space-y-4">
               {/* English Fields */}
               <Input name="title_en" placeholder="Product Title (English)" value={formData.title_en} onChange={handleChange} required />
