@@ -18,6 +18,7 @@ import {
   Label,
   Pie,
   PieChart,
+  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
@@ -31,14 +32,13 @@ const InfoPage = () => {
   async function fetchStats() {
     try {
       const { data } = await axios.get(`${server}/api/stats`, {
-     withCredentials:true
-
+        withCredentials: true
       });
 
       setCod(data.cod);
       setOnline(data.online);
       setData(data.data);
-      console.log(data)
+      console.log(data);
     } catch (error) {
       console.log(error);
     }
@@ -71,170 +71,226 @@ const InfoPage = () => {
     ...data,
     percentage: parseFloat(((data.users / (cod + online)) * 100).toFixed(2)),
   }));
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <Card className="flex flex-col">
-        <CardHeader className="items-center pb-0">
-          <CardTitle>Pie chart - Payment Methods</CardTitle>
-          <CardDescription>Payment Breakdown</CardDescription>
-        </CardHeader>
-        <CardContent className="flex-1 pb-0">
-          <ChartContainer
-            config={paymentChartConfig}
-            className="mx-auto aspect-square max-h-[250px]"
-          >
-            <PieChart>
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel />}
-              />
-
-              <Pie
-                data={paymentData}
-                dataKey={"users"}
-                nameKey={"method"}
-                innerRadius={60}
-                strokeWidth={5}
+    <div className="w-full h-full overflow-auto">
+      <div className="p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6 max-w-full">
+        {/* Payment Charts Row */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
+          {/* Payment Methods Pie Chart */}
+          <Card className="flex flex-col w-full">
+            <CardHeader className="items-center pb-2 sm:pb-4">
+              <CardTitle className="text-lg sm:text-xl text-center">
+                Payment Methods
+              </CardTitle>
+              <CardDescription className="text-sm text-center">
+                Payment Breakdown
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex-1 pb-2 sm:pb-4">
+              <ChartContainer
+                config={paymentChartConfig}
+                className="mx-auto aspect-square max-h-[200px] sm:max-h-[250px] w-full"
               >
-                <Label
-                  content={({ viewBox }) => {
-                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                      return (
-                        <text
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          textAnchor="middle"
-                          dominantBaseline={"middle"}
-                        >
-                          <tspan
-                            x={viewBox.cx}
-                            y={viewBox.cy}
-                            className="fill-muted-foreground text-xl font-bold"
-                          >
-                            {cod + online} Users
-                          </tspan>
-                        </text>
-                      );
-                    }
-                  }}
-                />
-              </Pie>
-            </PieChart>
-          </ChartContainer>
-        </CardContent>
-        <CardFooter className="flex-col gap-2 text-sm">
-          <div className="leading-none text-muted-foreground">
-            Showing total users for payment methods
-          </div>
-        </CardFooter>
-      </Card>
-
-      <Card className="flex flex-col">
-        <CardHeader className="items-center pb-0">
-          <CardTitle>Pie chart - Payment Percentage</CardTitle>
-          <CardDescription>Payment Breakdown</CardDescription>
-        </CardHeader>
-        <CardContent className="flex-1 pb-0">
-          <ChartContainer
-            config={paymentChartConfig}
-            className="mx-auto aspect-square max-h-[250px]"
-          >
-            <PieChart>
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel />}
-              />
-
-              <Pie
-                data={paymentPercentage}
-                dataKey={"percentage"}
-                nameKey={"method"}
-                innerRadius={60}
-                strokeWidth={5}
-              >
-                <Label
-                  content={({ viewBox }) => {
-                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                      return (
-                        <text
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          textAnchor="middle"
-                          dominantBaseline={"middle"}
-                        >
-                          <tspan
-                            x={viewBox.cx}
-                            y={viewBox.cy}
-                            className="fill-muted-foreground text-xl font-bold"
-                          >
-                            100%
-                          </tspan>
-                        </text>
-                      );
-                    }
-                  }}
-                />
-              </Pie>
-            </PieChart>
-          </ChartContainer>
-        </CardContent>
-        <CardFooter className="flex-col gap-2 text-sm">
-          <div className="leading-none text-muted-foreground">
-            Dispaying percentage distribution of payment methods
-          </div>
-        </CardFooter>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Bar chart - Products Sold</CardTitle>
-          <CardDescription>Units Sold for each products</CardDescription>
-        </CardHeader>
-
-        <CardContent>
-          <BarChart
-            width={600}
-            height={400}
-            data={data}
-            margin={{ top: 20, right: 30, left: 20, bottom: 50 }}
-          >
-            <CartesianGrid strokeDasharray={"3 3"} />
-            <XAxis
-              dataKey={"sold"}
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-              tickFormatter={(value) => `${value}`}
-            />
-            <YAxis />
-            <Tooltip
-              cursor={{ fill: "#f0f0f0" }}
-              content={({ payload }) => {
-                if (payload && payload.length) {
-                  const { name, sold } = payload[0].payload;
-                  return (
-                    <div
-                    className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-2 rounded shadow border border-gray-300 dark:border-gray-700 text-xs"
+                <PieChart width="100%" height="100%">
+                  <ChartTooltip
+                    cursor={false}
+                    content={<ChartTooltipContent hideLabel />}
+                  />
+                  <Pie
+                    data={paymentData}
+                    dataKey={"users"}
+                    nameKey={"method"}
+                    innerRadius={50}
+                    outerRadius={80}
+                    strokeWidth={3}
+                    cx="50%"
+                    cy="50%"
                   >
-                      <strong>{name.en}</strong>
-                      <br />
-                      <span>Sold: {sold}</span>
-                    </div>
-                  );
-                }
-                return null;
-              }}
-            />
-            <Bar dataKey={"sold"} fill="#8884d8" radius={8} />
-          </BarChart>
-        </CardContent>
+                    <Label
+                      content={({ viewBox }) => {
+                        if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                          return (
+                            <text
+                              x={viewBox.cx}
+                              y={viewBox.cy}
+                              textAnchor="middle"
+                              dominantBaseline={"middle"}
+                            >
+                              <tspan
+                                x={viewBox.cx}
+                                y={viewBox.cy}
+                                className="fill-muted-foreground text-sm sm:text-lg font-bold"
+                              >
+                                {cod + online} Users
+                              </tspan>
+                            </text>
+                          );
+                        }
+                      }}
+                    />
+                  </Pie>
+                </PieChart>
+              </ChartContainer>
+            </CardContent>
+            <CardFooter className="flex-col gap-2 text-xs sm:text-sm pt-0">
+              <div className="leading-none text-muted-foreground text-center">
+                Showing total users for payment methods
+              </div>
+            </CardFooter>
+          </Card>
 
-        <CardFooter className="flex-col gap-2 text-sm">
-          <div className="leading-none text-muted-foreground">
-            Hover over a bar to see the product details
-          </div>
-        </CardFooter>
-      </Card>
+          {/* Payment Percentage Pie Chart */}
+          <Card className="flex flex-col w-full">
+            <CardHeader className="items-center pb-2 sm:pb-4">
+              <CardTitle className="text-lg sm:text-xl text-center">
+                Payment Percentage
+              </CardTitle>
+              <CardDescription className="text-sm text-center">
+                Payment Breakdown
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex-1 pb-2 sm:pb-4">
+              <ChartContainer
+                config={paymentChartConfig}
+                className="mx-auto aspect-square max-h-[200px] sm:max-h-[250px] w-full"
+              >
+                <PieChart width="100%" height="100%">
+                  <ChartTooltip
+                    cursor={false}
+                    content={<ChartTooltipContent hideLabel />}
+                  />
+                  <Pie
+                    data={paymentPercentage}
+                    dataKey={"percentage"}
+                    nameKey={"method"}
+                    innerRadius={50}
+                    outerRadius={80}
+                    strokeWidth={3}
+                    cx="50%"
+                    cy="50%"
+                  >
+                    <Label
+                      content={({ viewBox }) => {
+                        if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                          return (
+                            <text
+                              x={viewBox.cx}
+                              y={viewBox.cy}
+                              textAnchor="middle"
+                              dominantBaseline={"middle"}
+                            >
+                              <tspan
+                                x={viewBox.cx}
+                                y={viewBox.cy}
+                                className="fill-muted-foreground text-sm sm:text-lg font-bold"
+                              >
+                                100%
+                              </tspan>
+                            </text>
+                          );
+                        }
+                      }}
+                    />
+                  </Pie>
+                </PieChart>
+              </ChartContainer>
+            </CardContent>
+            <CardFooter className="flex-col gap-2 text-xs sm:text-sm pt-0">
+              <div className="leading-none text-muted-foreground text-center">
+                Displaying percentage distribution of payment methods
+              </div>
+            </CardFooter>
+          </Card>
+        </div>
+
+        {/* Products Sold Bar Chart - Full Width */}
+        <Card className="w-full">
+          <CardHeader className="pb-2 sm:pb-4">
+            <CardTitle className="text-lg sm:text-xl">
+              Products Sold
+            </CardTitle>
+            <CardDescription className="text-sm">
+              Units Sold for each product
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="p-0 sm:p-6">
+            <div className="w-full h-[300px] sm:h-[400px] lg:h-[450px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={data}
+                  margin={{
+                    top: 20,
+                    right: 10,
+                    left: 10,
+                    bottom: 60
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                  <XAxis
+                    dataKey="name.en"
+                    tickLine={false}
+                    tickMargin={10}
+                    axisLine={false}
+                    interval={0}
+                    angle={-45}
+                    textAnchor="end"
+                    height={80}
+                    tick={{
+                      fontSize: 12,
+                      fill: 'currentColor'
+                    }}
+                    tickFormatter={(value) => {
+                      // Truncate long product names for better display
+                      return value && value.length > 15 ? `${value.substring(0, 15)}...` : value;
+                    }}
+                  />
+                  <YAxis
+                    tick={{
+                      fontSize: 12,
+                      fill: 'currentColor'
+                    }}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <Tooltip
+                    cursor={{ fill: "rgba(0,0,0,0.1)" }}
+                    content={({ payload, label }) => {
+                      if (payload && payload.length) {
+                        const data = payload[0].payload;
+                        return (
+                          <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 text-sm max-w-[200px]">
+                            <div className="font-semibold truncate" title={data.name?.en}>
+                              {data.name?.en}
+                            </div>
+                            <div className="text-muted-foreground mt-1">
+                              Units Sold: <span className="font-medium text-foreground">{data.sold}</span>
+                            </div>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Bar
+                    dataKey="sold"
+                    fill="#3b82f6"
+                    radius={[4, 4, 0, 0]}
+                    className="transition-all duration-200 hover:opacity-80"
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+
+          <CardFooter className="flex-col gap-2 text-xs sm:text-sm pt-2">
+            <div className="leading-none text-muted-foreground text-center">
+              Hover over a bar to see the product details
+            </div>
+          </CardFooter>
+        </Card>
+      </div>
     </div>
   );
 };

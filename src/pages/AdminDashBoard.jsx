@@ -7,7 +7,6 @@ import { Home, Info, MenuIcon, ShoppingBag, X } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import AdminLayout from '@/components/admin/AdminLayout';
 
 const AdminDashBoard = () => {
   const [selectedPage, setSelectedPage] = useState("home");
@@ -16,7 +15,6 @@ const AdminDashBoard = () => {
   const navigate = useNavigate();
   const { t } = useTranslation('admin');
 
-  // ✅ Navigate safely using useEffect
   useEffect(() => {
     if (!user || user.role !== "admin") {
       navigate("/");
@@ -37,20 +35,21 @@ const AdminDashBoard = () => {
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-background">
       {/* Sidebar */}
       <div
-        className={`w-64 fixed lg:relative lg:translate-x-0 z-50 transition-transform duration-300 bg-background/50 backdrop-blur shadow-lg h-full 
+        className={`w-64 fixed lg:justify lg:translate-x-0 z-50 transition-transform duration-300 bg-background/70 backdrop-blur shadow-lg h-full 
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         <div className="flex flex-col h-full p-4">
-          <h1 className="text-lg font-bold mb-4">{t("adminPanel")}</h1>
-          <div className="space-y-4">
-            {/* ✅ Use icon + span, no nested buttons */}
+          <h1 className="text-lg font-bold mb-6">{t("adminPanel")}</h1>
+          <div className="space-y-3">
             <Button
               variant="ghost"
               onClick={() => setSelectedPage("home")}
-              className={`w-full flex items-center gap-2 ${selectedPage === "home" ? "bg-gray-500 text-white" : ""}`}
+              className={`w-full flex items-center gap-2 justify-start ${
+                selectedPage === "home" ? "bg-primary text-primary-foreground" : ""
+              }`}
             >
               <Home className="w-5 h-5" />
               <span>{t("home")}</span>
@@ -59,7 +58,9 @@ const AdminDashBoard = () => {
             <Button
               variant="ghost"
               onClick={() => setSelectedPage("orders")}
-              className={`w-full flex items-center gap-2 ${selectedPage === "orders" ? "bg-gray-500 text-white" : ""}`}
+              className={`w-full flex items-center gap-2 justify-start ${
+                selectedPage === "orders" ? "bg-primary text-primary-foreground" : ""
+              }`}
             >
               <ShoppingBag className="w-5 h-5" />
               <span>{t("orders")}</span>
@@ -68,7 +69,9 @@ const AdminDashBoard = () => {
             <Button
               variant="ghost"
               onClick={() => setSelectedPage("info")}
-              className={`w-full flex items-center gap-2 ${selectedPage === "info" ? "bg-gray-500 text-white" : ""}`}
+              className={`w-full flex items-center gap-2 justify-start ${
+                selectedPage === "info" ? "bg-primary text-primary-foreground" : ""
+              }`}
             >
               <Info className="w-5 h-5" />
               <span>{t("info")}</span>
@@ -95,9 +98,9 @@ const AdminDashBoard = () => {
       )}
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-2 flex flex-col lg:ml-64">
         {/* Header */}
-        <div className="shadow p-4 flex items-center justify-between lg:justify-end">
+        <div className="shadow p-4 flex items-center justify-between lg:justify-end bg-background">
           <Button
             variant="outline"
             className="lg:hidden"
@@ -109,7 +112,9 @@ const AdminDashBoard = () => {
         </div>
 
         {/* Page content */}
-        <div className="p-4">{renderPageContent()}</div>
+        <div className="flex-1 overflow-y-auto p-4 md:p-6">
+          {renderPageContent()}
+        </div>
       </div>
     </div>
   );

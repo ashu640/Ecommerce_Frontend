@@ -20,20 +20,18 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
-  const [allOrders, setAllOrders] = useState([]); // for search
+  const [allOrders, setAllOrders] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [notify, setNotify] = useState(false);
   const [lastUpdate, setLastUpdate] = useState(null);
 
-  // 🔑 Pagination state
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const limit = 10;
 
   const intervalRef = useRef(null);
 
-  // Fetch paginated orders
   const fetchOrders = async (pageNum = 1) => {
     try {
       const { data } = await axios.get(
@@ -59,13 +57,11 @@ const OrdersPage = () => {
     }
   };
 
-  // Fetch ALL orders for searching
   const fetchAllOrders = async () => {
     try {
-      const { data } = await axios.get(
-        `${server}/api/order/admin/all`, // backend should allow no pagination if limit is very high
-        { withCredentials: true }
-      );
+      const { data } = await axios.get(`${server}/api/order/admin/all`, {
+        withCredentials: true,
+      });
       setAllOrders(data.orders || []);
     } catch (error) {
       console.error('Failed to fetch all orders for search', error);
@@ -77,7 +73,7 @@ const OrdersPage = () => {
   }, [page]);
 
   useEffect(() => {
-    fetchAllOrders(); // load all orders for search
+    fetchAllOrders();
   }, []);
 
   useEffect(() => {
@@ -115,7 +111,6 @@ const OrdersPage = () => {
     }
   };
 
-  // If searching, filter from ALL orders; else show paginated
   const activeOrders = search
     ? allOrders.filter(
         (order) =>
@@ -125,194 +120,255 @@ const OrdersPage = () => {
     : orders;
 
   return (
-    <div className="p-4 md:p-6 space-y-6 w-full max-w-7xl mx-auto overflow-hidden">
-      <h1 className="text-2xl font-bold">Manage Orders</h1>
+    <div className="w-full h-full flex flex-col overflow-hidden">
+      {/* Fixed Header */}
+      <div className="flex-shrink-0 p-3 sm:p-4 lg:p-6 border-b bg-background">
+        <div className="space-y-3 sm:space-y-4">
+          <h1 className="text-xl sm:text-2xl font-bold truncate">Manage Orders</h1>
 
-      {notify && (
-        <div className="bg-yellow-200 text-black p-2 rounded">
-          ⚡ Orders have been updated — please refresh to see the latest changes.
+          {notify && (
+            <div className="bg-yellow-200 text-black p-2 rounded text-xs sm:text-sm">
+              ⚡ Orders have been updated — please refresh to see the latest changes.
+            </div>
+          )}
+
+          <Input
+            placeholder="Search by email or order id"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full max-w-md text-sm sm:text-base"
+          />
         </div>
-      )}
+      </div>
 
-      <Input
-        placeholder="Search by email or order id"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="w-full md:w-1/2"
-      />
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-hidden">
+        {loading ? (
+          <div className="flex items-center justify-center h-full">
+            <Loading />
+          </div>
+        ) : activeOrders.length > 0 ? (
+          <div className="h-full flex flex-col">
+            {/* Desktop Table - Hidden on mobile/tablet */}
+            <div className="hidden xl:block flex-1 overflow-hidden">
+              <ScrollArea className="h-full w-full">
+                <div className="min-w-full">
+                  <Table className="w-full">
+                    <TableHeader className="sticky top-0 bg-background z-10">
+                      <TableRow>
+                        <TableHead className="w-[140px]">Order Id</TableHead>
+                        <TableHead className="w-[200px]">User Email</TableHead>
+                        <TableHead className="w-[100px]">Total</TableHead>
+                        <TableHead className="w-[120px]">Status</TableHead>
+                        <TableHead className="w-[120px]">Date</TableHead>
+                        <TableHead className="w-[160px]">Action</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {activeOrders.map((order) => (
+                        <TableRow key={order._id}>
+                          <TableCell className="font-mono text-xs">
+                            <Link
+                              to={`/order/${order._id}`}
+                              className="text-blue-600 hover:underline block truncate max-w-[120px]"
+                              title={order._id}
+                            >
+                              {order._id}
+                            </Link>
+                          </TableCell>
+                          <TableCell className="max-w-[180px] truncate" title={order.user.email}>
+                            {order.user.email}
+                          </TableCell>
+                          <TableCell className="font-semibold">₹{order.subTotal}</TableCell>
+                          <TableCell>
+                            <span
+                              className={`px-2 py-1 rounded text-white capitalize text-xs ${
+                                order.status === 'pending'
+                                  ? 'bg-yellow-500'
+                                  : order.status === 'shipped'
+                                  ? 'bg-blue-500'
+                                  : order.status === 'delivered'
+                                  ? 'bg-green-500'
+                                  : 'bg-red-500'
+                              }`}
+                            >
+                              {order.status}
+                            </span>
+                          </TableCell>
+                          <TableCell className="text-sm">
+                            {moment(order.createdAt).format('DD-MM-YYYY')}
+                          </TableCell>
+                          <TableCell>
+                            <select
+                              value={order.status}
+                              className="w-[140px] px-2 py-1 border rounded-md dark:bg-black text-sm"
+                              onChange={(e) =>
+                                updateOrderStatus(order._id, e.target.value)
+                              }
+                            >
+                              <option value="pending">Pending</option>
+                              <option value="shipped">Shipped</option>
+                              <option value="delivered">Delivered</option>
+                              <option value="cancelled">Cancelled</option>
+                            </select>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </ScrollArea>
+            </div>
 
-      {loading ? (
-        <Loading />
-      ) : activeOrders.length > 0 ? (
-        <div className="space-y-4">
-          {/* Desktop Table (lg and above) */}
-          <div className="hidden lg:block rounded-lg border">
-            <ScrollArea className="w-full h-[70vh]">
-              <Table className="min-w-full">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Order Id</TableHead>
-                    <TableHead>User Email</TableHead>
-                    <TableHead>Total</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
+            {/* Mobile/Tablet Cards - Shown on mobile and tablet */}
+            <div className="xl:hidden flex-1 overflow-hidden">
+              <ScrollArea className="h-full w-full">
+                <div className="p-3 sm:p-4 space-y-3">
                   {activeOrders.map((order) => (
-                    <TableRow key={order._id}>
-                      <TableCell>
-                        <Link
-                          to={`/order/${order._id}`}
-                          className="text-blue-600 underline"
-                        >
-                          {order._id}
-                        </Link>
-                      </TableCell>
-                      <TableCell>{order.user.email}</TableCell>
-                      <TableCell>₹{order.subTotal}</TableCell>
-                      <TableCell>
-                        <span
-                          className={`px-2 py-1 rounded text-white capitalize ${
-                            order.status === 'pending'
-                              ? 'bg-yellow-500'
-                              : order.status === 'shipped'
-                              ? 'bg-blue-500'
-                              : order.status === 'delivered'
-                              ? 'bg-green-500'
-                              : 'bg-red-500'
-                          }`}
-                        >
-                          {order.status}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        {moment(order.createdAt).format('DD-MM-YYYY')}
-                      </TableCell>
-                      <TableCell>
-                        <select
-                          value={order.status}
-                          className="w-[150px] px-3 py-2 border rounded-md dark:bg-black"
-                          onChange={(e) =>
-                            updateOrderStatus(order._id, e.target.value)
-                          }
-                        >
-                          <option value="pending">Pending</option>
-                          <option value="shipped">Shipped</option>
-                          <option value="delivered">Delivered</option>
-                          <option value="cancelled">Cancelled</option>
-                        </select>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </ScrollArea>
-          </div>
+                    <Card key={order._id} className="shadow-sm border w-full">
+                      <CardContent className="p-3 sm:p-4 space-y-2 sm:space-y-3">
+                        <div className="space-y-2 text-sm">
+                          <div>
+                            <span className="font-semibold text-xs uppercase tracking-wide text-muted-foreground">Order ID</span>
+                            <Link
+                              to={`/order/${order._id}`}
+                              className="block text-blue-600 hover:underline font-mono text-xs break-all mt-1"
+                            >
+                              {order._id}
+                            </Link>
+                          </div>
+                          
+                          <div>
+                            <span className="font-semibold text-xs uppercase tracking-wide text-muted-foreground">Email</span>
+                            <p className="break-all mt-1">{order.user.email}</p>
+                          </div>
 
-          {/* Mobile + iPad (cards) */}
-          <div className="lg:hidden space-y-3">
-            {activeOrders.map((order) => (
-              <Card key={order._id} className="shadow-md border">
-                <CardContent className="p-4 space-y-3">
-                  <p>
-                    <strong>Order Id:</strong>{' '}
-                    <Link
-                      to={`/order/${order._id}`}
-                      className="text-blue-600 underline break-all"
-                    >
-                      {order._id}
-                    </Link>
-                  </p>
-                  <p>
-                    <strong>User Email:</strong>{' '}
-                    <span className="break-all">{order.user.email}</span>
-                  </p>
-                  <p>
-                    <strong>Total:</strong> ₹{order.subTotal}
-                  </p>
-                  <p>
-                    <strong>Status:</strong>{' '}
-                    <span
-                      className={`px-2 py-1 rounded text-white capitalize ${
-                        order.status === 'pending'
-                          ? 'bg-yellow-500'
-                          : order.status === 'shipped'
-                          ? 'bg-blue-500'
-                          : order.status === 'delivered'
-                          ? 'bg-green-500'
-                          : 'bg-red-500'
-                      }`}
-                    >
-                      {order.status}
-                    </span>
-                  </p>
-                  <p>
-                    <strong>Date:</strong>{' '}
-                    {moment(order.createdAt).format('DD-MM-YYYY')}
-                  </p>
-                  <div>
-                    <strong>Action:</strong>
-                    <select
-                      value={order.status}
-                      className="w-full sm:w-[150px] px-3 py-2 border rounded-md mt-1 dark:bg-black"
-                      onChange={(e) =>
-                        updateOrderStatus(order._id, e.target.value)
-                      }
-                    >
-                      <option value="pending">Pending</option>
-                      <option value="shipped">Shipped</option>
-                      <option value="delivered">Delivered</option>
-                      <option value="cancelled">Cancelled</option>
-                    </select>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <span className="font-semibold text-xs uppercase tracking-wide text-muted-foreground">Total</span>
+                              <p className="font-semibold mt-1">₹{order.subTotal}</p>
+                            </div>
+                            <div>
+                              <span className="font-semibold text-xs uppercase tracking-wide text-muted-foreground">Date</span>
+                              <p className="text-sm mt-1">{moment(order.createdAt).format('DD-MM-YYYY')}</p>
+                            </div>
+                          </div>
 
-          {/* Pagination (only when not searching) */}
-          {!search && (
-            <ScrollArea className="w-full">
-              <div className="flex justify-center lg:justify-between items-center space-x-2 pt-4 min-w-max">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={page === 1}
-                  onClick={() => setPage((p) => p - 1)}
-                >
-                  Prev
-                </Button>
+                          <div>
+                            <span className="font-semibold text-xs uppercase tracking-wide text-muted-foreground">Status</span>
+                            <div className="mt-1">
+                              <span
+                                className={`inline-block px-2 py-1 rounded text-white capitalize text-xs ${
+                                  order.status === 'pending'
+                                    ? 'bg-yellow-500'
+                                    : order.status === 'shipped'
+                                    ? 'bg-blue-500'
+                                    : order.status === 'delivered'
+                                    ? 'bg-green-500'
+                                    : 'bg-red-500'
+                                }`}
+                              >
+                                {order.status}
+                              </span>
+                            </div>
+                          </div>
 
-                <div className="flex space-x-2 overflow-x-auto">
-                  {[...Array(totalPages)].map((_, i) => (
-                    <Button
-                      key={i}
-                      size="sm"
-                      variant={page === i + 1 ? 'default' : 'outline'}
-                      onClick={() => setPage(i + 1)}
-                    >
-                      {i + 1}
-                    </Button>
+                          <div>
+                            <span className="font-semibold text-xs uppercase tracking-wide text-muted-foreground">Update Status</span>
+                            <select
+                              value={order.status}
+                              className="w-full px-3 py-2 border rounded-md mt-1 dark:bg-black text-sm"
+                              onChange={(e) => updateOrderStatus(order._id, e.target.value)}
+                            >
+                              <option value="pending">Pending</option>
+                              <option value="shipped">Shipped</option>
+                              <option value="delivered">Delivered</option>
+                              <option value="cancelled">Cancelled</option>
+                            </select>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
                   ))}
                 </div>
+              </ScrollArea>
+            </div>
 
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={page === totalPages}
-                  onClick={() => setPage((p) => p + 1)}
-                >
-                  Next
-                </Button>
+            {/* Fixed Pagination Footer */}
+            {!search && (
+              <div className="flex-shrink-0 border-t bg-background">
+                <ScrollArea className="w-full">
+                  <div className="flex justify-center items-center space-x-2 p-3 sm:p-4 min-w-max">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={page === 1}
+                      onClick={() => setPage((p) => p - 1)}
+                      className="text-xs sm:text-sm"
+                    >
+                      Prev
+                    </Button>
+
+                    <div className="flex space-x-1 sm:space-x-2 max-w-[200px] sm:max-w-none overflow-x-auto">
+                      {[...Array(Math.min(totalPages, 5))].map((_, i) => {
+                        let pageNum;
+                        if (totalPages <= 5) {
+                          pageNum = i + 1;
+                        } else if (page <= 3) {
+                          pageNum = i + 1;
+                        } else if (page >= totalPages - 2) {
+                          pageNum = totalPages - 4 + i;
+                        } else {
+                          pageNum = page - 2 + i;
+                        }
+                        
+                        return (
+                          <Button
+                            key={pageNum}
+                            size="sm"
+                            variant={page === pageNum ? 'default' : 'outline'}
+                            onClick={() => setPage(pageNum)}
+                            className="text-xs sm:text-sm min-w-[32px] sm:min-w-[36px]"
+                          >
+                            {pageNum}
+                          </Button>
+                        );
+                      })}
+                      {totalPages > 5 && page < totalPages - 2 && (
+                        <>
+                          <span className="px-2 text-muted-foreground">...</span>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setPage(totalPages)}
+                            className="text-xs sm:text-sm"
+                          >
+                            {totalPages}
+                          </Button>
+                        </>
+                      )}
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={page === totalPages}
+                      onClick={() => setPage((p) => p + 1)}
+                      className="text-xs sm:text-sm"
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </ScrollArea>
               </div>
-            </ScrollArea>
-          )}
-        </div>
-      ) : (
-        <p>No Orders</p>
-      )}
+            )}
+          </div>
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-muted-foreground">No Orders</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
