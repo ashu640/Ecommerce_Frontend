@@ -149,10 +149,13 @@ const OrderPage = () => {
                   {t("shippingDetails")}
                 </h2>
                 <p>
+                  <strong>{t("name")}: </strong> {order.address.fullName}
+                </p>
+                <p>
                   <strong>{t("phone")}: </strong> {order.phone}
                 </p>
                 <p>
-                  <strong>{t("address")}: </strong> {order.address}
+                  <strong>{t("address")}: </strong> {order.address.addressLine1}
                 </p>
                 <p>
                   <strong>{t("user")}: </strong>{" "}
