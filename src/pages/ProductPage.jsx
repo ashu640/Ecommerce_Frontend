@@ -127,6 +127,7 @@ const ProductPage = () => {
       });
       toast.success(data.message);
       fetchProduct(id, i18n.language);
+      fetchProducts(); 
     } catch (error) {
       toast.error(error.response?.data?.message || t("imageUpdateFailed"));
     } finally {
