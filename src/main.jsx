@@ -9,8 +9,8 @@ import { CartProvider } from './context/cartContext'
 import './i18n';
 import { BrowserRouter } from "react-router-dom";
 
-// export const server = "https://ecommerce-15v7.onrender.com";
-export const server = "http://localhost:5000";
+export const server = "https://ecommerce-15v7.onrender.com";
+// export const server = "http://localhost:5000";
 
 export const categories = [
   "Electronics",
